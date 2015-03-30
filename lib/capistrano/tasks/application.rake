@@ -1,44 +1,32 @@
-####################################################################################################
-#
-# Capistrano Important Tasks
-#
-#####################################################################################################
-#
-# See all available tasks
-# cap -T
-
-# To deploy a new server with capistrano execute:
-# cap [development|test|production] application:deploy_first_time
-
-# To deploy the application, including assets compilation:
-# cap [development|test|production] application:deploy
-
-# To restart the application, including reloading server cache:
-# cap [development|test|production] application:restart
-
-####################################################################################################
-#
-# Capistrano Internal Tasks
-#
-#####################################################################################################
-#
-# To execute db seed (can only be executed once... to add default roles and users):
-# cap [development|test|production] db:seed
-
-# To restart Apache:
-# cap [development|test|production] deploy:restart_apache
-
-# To execute rake commands:
-# cap [development|test|production] util:runrake task=secret
-
 # XFEL application specific tasks
 namespace :application do
-  # Task 'application:deploy' deploys a new version of the application in the specified server
-  desc 'Re-deploy existent Application in the specified server'
+  # Task 'application:deploy_first_time' deploys an application for the first time in the configured server(s).
+  # This task besides deploying the application also make all the necessary configurations
+  desc 'Configures Apache and deploys the Application for the first time in the configured server(s) '/
+         'with the right permissions'
+  task :deploy_first_time do
+    on roles(:app, :web) do
+      info '#' * 100
+      info '#' * 10 + ' => Start Application first time deployment...'
+      info '#' * 100
+
+      invoke 'app_home:create_all'
+      invoke 'database:configure_mysql'
+      invoke 'secrets:configure'
+      invoke 'apache:configure_and_start'
+      invoke 'apache:check_write_permissions'
+      invoke :deploy
+      invoke 'app_home:correct_shared_permissions'
+      invoke 'application:restart'
+    end
+  end
+
+  # Task 'application:deploy' deploys a new version of the application in the configured server(s)
+  desc 'Re-deploys existent Application in the configured server(s)'
   task :deploy do
     on roles(:app, :web) do
       info '#' * 100
-      info '#' * 10 + ' => Start subsequents times deploy...'
+      info '#' * 10 + ' => Start Application re-deployment...'
       info '#' * 100
 
       # This is advisable to kill users cookies after the upgrade.
@@ -51,27 +39,6 @@ namespace :application do
     end
   end
 
-  # Task 'application:deploy_first_time' deploys an application for the first time in the specified server.
-  # This task besides deploying the application also make all the necessary configurations
-  desc 'Deploy Application for the first time in the specified server'
-  task :deploy_first_time do
-    on roles(:app, :web) do
-      info '#' * 100
-      info '#' * 10 + ' => Start first time deploy...'
-      info '#' * 100
-
-      invoke 'app_home:create_all'
-      invoke 'haproxy:configure_and_start' # This should go to Puppet
-      invoke 'database:configure_mysql'
-      invoke 'secrets:configure'
-      invoke 'apache:configure_and_start'
-      invoke 'apache:check_write_permissions'
-      invoke :deploy
-      invoke 'app_home:correct_shared_permissions'
-      invoke 'application:restart'
-    end
-  end
-
   desc 'Restarts the application, including reloading server cache'
   task :restart do
     # invoke 'app_home:restart'
@@ -80,13 +47,13 @@ namespace :application do
     invoke 'app_home:deploy_success_msg'
   end
 
-  desc 'Restarts the application, including reloading server cache'
+  desc 'Re-deploys apache configuration files and restart it'
   task :reconfigure_apache do
     invoke 'apache:configure'
     invoke 'application:restart'
   end
 
-  desc 'Show variables values without deploying'
+  desc 'Shows variables values generated without deploying anything'
   task :show_variables do
     on roles(:app, :web) do
       info '#' * 100
@@ -203,7 +170,7 @@ namespace :load do
 
     # RVM related information
     set :rvm_type, -> { :system }
-    # set :rvm_ruby_version, '2.1.2'
+    set :rvm_ruby_version, -> { ask('Please specify the Ruby version (i.e. 2.1.5)', '') }
     set :rvm_roles, [:app, :web]
     # set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
 
