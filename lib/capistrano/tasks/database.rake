@@ -33,7 +33,7 @@ namespace :database do
   # desc 'Configure database.yml in the shared path'
   task :configure_database_file do
     on roles(:app) do
-      set :database_original_file_path, "config/recipes/config/#{fetch(:database_original_file_name)}"
+      set :database_original_file_path, "../../recipes/config/#{fetch(:database_original_file_name)}"
       set :database_file_path, "#{fetch(:shared_path)}/config/database.yml"
 
       invoke 'database:set_permissions_pre_update'

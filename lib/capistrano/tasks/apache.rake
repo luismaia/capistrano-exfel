@@ -91,7 +91,7 @@ namespace :apache do
 
       set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
 
-      upload! StringIO.new(File.read('config/recipes/apache_http.conf')), "#{fetch(:shared_apache_conf_file)}"
+      upload! StringIO.new(File.read('../../recipes/apache_http.conf')), "#{fetch(:shared_apache_conf_file)}"
       debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
 
@@ -123,7 +123,7 @@ namespace :apache do
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
 
-      upload! StringIO.new(File.read('config/recipes/apache_ssl.conf')), "#{fetch(:shared_apache_conf_ssl_file)}"
+      upload! StringIO.new(File.read('../../recipes/apache_ssl.conf')), "#{fetch(:shared_apache_conf_ssl_file)}"
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
 
