@@ -1,0 +1,18 @@
+# SQLite version 3.x
+#   gem install sqlite3
+base: &base
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+development:
+  database: db/development.sqlite3
+  <<: *base
+
+test:
+  database: db/test.sqlite3
+  <<: *base
+
+production:
+  database: db/production.sqlite3
+  <<: *base

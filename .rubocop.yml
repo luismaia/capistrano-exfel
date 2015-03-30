@@ -1,0 +1,20 @@
+#
+# Line is too long.
+Metrics/LineLength:
+  Max: 120 # Default: 80
+
+#
+# Use %r only for regular expressions matching more than 1 '/' character.
+Style/RegexpLiteral:
+  Exclude:
+    - 'capistrano-exfel.gemspec'
+
+#
+# Use next to skip iteration.
+Style/Next:
+  Enabled: false
+
+#
+# Use the lambda method for multi-line lambdas.
+Style/Lambda:
+  Enabled: false

@@ -1,0 +1,38 @@
+# MySQL.  Versions 4.1 and 5.0 are recommended.
+#
+# Install the MySQL driver:
+#   gem install mysql2
+#
+# And be sure to use new-style password hashing:
+#   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
+#
+base: &base
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 5
+  timeout: 5000
+  database: <<database_name>>
+  username: <<database_username>>
+  password: <<database_password>>
+  host: <<database_host>>
+  port: 3306
+
+  # Socket files are faster than TCP, but can only be used when both programs are on the same computer.
+  #
+  # On UNIX, when two programs on the same computer want to talk to each other, they can still open up a TCP connection.
+  # But they can also open up a connection via a "socket file".
+  # Linux makes the socket file API rather similar to the TCP API, so it's not a big deal to update
+  # a program that already communicates over the network via TCP to support communicating via socket files too.
+  #
+  # Linux:
+  socket: /var/lib/mysql/mysql.sock
+
+development:
+  <<: *base
+
+test:
+  <<: *base
+
+production:
+  <<: *base
