@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Luis Maia']
   spec.email         = ['luisgoncalo.maia@gmail.com']
   spec.summary       = 'Deploy Ruby on Rails 4 Applications in EXFEL VMs (Scientific Linux using Apache and Passenger)'
-  spec.description   = 'Deployment of Ruby on Rails 4 Applications in EXFEL VMs gem '\
+  spec.description   = 'Deployment of Ruby on Rails 4 Applications in EXFEL VMs gem ' \
                         '(Scientific Linux + Apache + RVM + Phusion Passenger) using Capistrano3'
   spec.homepage      = ''
   spec.license       = 'MIT'

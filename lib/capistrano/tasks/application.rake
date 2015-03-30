@@ -2,8 +2,8 @@
 namespace :application do
   # Task 'application:deploy_first_time' deploys an application for the first time in the configured server(s).
   # This task besides deploying the application also make all the necessary configurations
-  desc 'Configures Apache and deploys the Application for the first time in the configured server(s) '/
-         'with the right permissions'
+  desc 'Configures Apache and deploys the Application for the first time in the configured server(s) ' \
+       'with the right permissions'
   task :deploy_first_time do
     on roles(:app, :web) do
       info '#' * 100
