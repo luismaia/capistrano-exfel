@@ -29,7 +29,7 @@ namespace :secrets do
       debug 'Create and configure secrets.yml file'
       secrets_file_path = "#{fetch(:secrets_file_path)}"
 
-      set :secrets_original_file_path, '../../recipes/config/secrets_example.yml'
+      set :secrets_original_file_path, File.expand_path('../../recipes/config/secrets_example.yml', __FILE__)
 
       unless remote_file_exists?(secrets_file_path)
         upload! StringIO.new(File.read("#{fetch(:secrets_original_file_path)}")), "#{fetch(:secrets_file_path)}"
