@@ -33,7 +33,6 @@ namespace :database do
   # desc 'Configure database.yml in the shared path'
   task :configure_database_file do
     on roles(:app) do
-      set :database_original_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)
       set :database_file_path, "#{fetch(:shared_path)}/config/database.yml"
 
       invoke 'database:set_permissions_pre_update'
@@ -53,12 +52,13 @@ namespace :database do
       default_username = "#{fetch(:app_name)}_dev"
       default_password = ''
 
+      set :db_orig_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)
       set :database_host, ask('Database host:', default_host)
       set :database_name, ask('Database Name:', default_database)
       set :database_username, ask('Database Username:', default_username)
       set :database_password, ask('Database Password:', default_password)
 
-      upload! StringIO.new(File.read("#{fetch(:database_original_file_path)}")), "#{fetch(:database_file_path)}"
+      upload! StringIO.new(File.read("#{fetch(:db_orig_file_path)}")), "#{fetch(:database_file_path)}"
 
       execute "sed -i 's/<<database_name>>/#{fetch(:database_name)}/g' #{fetch(:database_file_path)}"
       execute "sed -i 's/<<database_username>>/#{fetch(:database_username)}/g' #{fetch(:database_file_path)}"
