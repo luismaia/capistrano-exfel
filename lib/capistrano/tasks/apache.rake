@@ -50,6 +50,8 @@ namespace :apache do
   desc 'Configure Apache configuration files'
   task :configure do
     on roles(:app) do
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
       set :shared_path, "#{fetch(:deploy_to)}/shared"
       set :shared_apache_path, "#{fetch(:shared_path)}/apache"
 
