@@ -1,6 +1,6 @@
 # Capistrano::Exfel
 
-Deploys Ruby on Rails 4 Applications in EXFEL VMs using Capistrano3 throw username/password authentication.
+Deploys Ruby on Rails Applications in EXFEL VMs using Capistrano3 throw username/password authentication.
 The standard EXFEL VMs consist of Scientific Linux 6 with Apache.
 Installation of Phusion Passenger and RVM are also required to this gem.
 
@@ -12,7 +12,7 @@ Add these lines to your application's Gemfile:
     gem 'capistrano', '~> 3.4.0'
     gem 'capistrano-rails', '~> 1.1.2'
     gem 'capistrano-rvm', '~> 0.1.2'
-    gem 'capistrano-exfel', '~> 0.0.1'
+    gem 'capistrano-exfel', '~> 0.0.3'
 
 And then execute:
 
@@ -31,33 +31,44 @@ Add this line to your `Capfile`:
 
 This gem will reuse `capistrano-rails` and `capistrano-rvm` tasks to build the following tasks:
 
+Task **application:deploy_first_time**:
+
     # Task 'application:deploy_first_time' deploys an application for the first time in the configured server(s).
     # This task besides deploying the application also make all the necessary configurations
-    # Description: Re-deploys existent Application in the configured server(s):
-    cap application:deploy
-
-    # Task 'application:deploy' deploys a new version of the application in the configured server(s)
     # Description: Configures Apache and deploys the Application for the first time in the configured server(s)
     # with the right permissions:
     cap application:deploy_first_time
 
+Task **application:deploy**:
+
+    # Task 'application:deploy' deploys a new version of the application in the configured server(s)
+    # Description: Re-deploys existent Application in the configured server(s):
+    cap application:deploy
+
+Task **application:restart**:
+
     # Description: 'Restarts the application, including reloading server cache'
     cap application:restart
+
+Task **application:reconfigure_apache**:
 
     # Description: 'Re-deploys apache configuration files and restart it'
     cap application:reconfigure_apache
 
+Task **application:show_variables**:
+
     # Description: 'Shows variables values generated without deploying anything'
     cap application:show_variables
 
-    #
+Additional Tasks:
+
     # See all the additional available tasks using the command:
     cap -T
 
 The most important configurable options and their defaults:options can be added to the `deploy.rb` file:
 
     # Set username and password
-    set :username, ask('username', 'maial') # If not specified will present current user
+    set :username, ask('username', 'maial') # If not specified will ask for it proposing the current user
     set :password, ask('password', nil, echo: false) # If not specified will ask for it
 
     # Application Name
