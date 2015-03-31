@@ -95,22 +95,13 @@ namespace :load do
     # Application Name
     set :app_name, -> { ask('Please specify the application name (i.e. my_app)', 'my_app') }
 
-    # Build default application URI
-    set :default_app_uri, -> do
-      case fetch(:rails_env).to_s
-      when 'development'
-        "dev_#{fetch(:app_name)}"
-      when 'test'
-        "test_#{fetch(:app_name)}"
-      else
-        "#{fetch(:app_name)}"
-      end
-    end
-
     # Set application related information
     set :app_domain, -> do
       ask('Please specify the application domain (i.e. https://in.xfel.eu/)', 'https://in.xfel.eu/')
     end
+
+    # Build default application URI
+    set :default_app_uri, -> { "#{get_rails_env_abbr}_#{fetch(:app_name)}" }
 
     set :app_name_uri, -> do
       ask("Please specify the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))

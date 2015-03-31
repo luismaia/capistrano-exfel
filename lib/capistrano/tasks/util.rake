@@ -10,6 +10,19 @@ def get_command_output(command)
   capture("#{command}").strip
 end
 
+def get_rails_env_abbr(rails_env_abbr = nil)
+  return rails_env_abbr unless rails_env_abbr.blank?
+
+  case fetch(:rails_env).to_s
+  when 'development'
+    'dev'
+  when 'test'
+    'test'
+  else
+    ''
+  end
+end
+
 def execute_rake_command(task)
   within release_path do
     execute :rake, task, "RAILS_ENV=#{fetch(:environment)}"
