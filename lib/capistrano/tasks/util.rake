@@ -11,7 +11,7 @@ def get_command_output(command)
 end
 
 def get_rails_env_abbr(rails_env_abbr = nil)
-  return rails_env_abbr unless rails_env_abbr.blank?
+  return rails_env_abbr unless rails_env_abbr.nil?
 
   case fetch(:rails_env).to_s
   when 'development'
