@@ -1,6 +1,6 @@
 module Capistrano
   # Capistrano::Exfel version information
   module Exfel
-    VERSION = '0.0.3'
+    VERSION = '0.0.4'
   end
 end
