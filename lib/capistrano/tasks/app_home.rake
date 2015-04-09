@@ -79,13 +79,6 @@ namespace :app_home do
       debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
       execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
 
-      # # Only files should be changed
-      # debug "chown nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/config/*"
-      # execute "#{sudo_cmd} chown nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/config/*"
-      #
-      # debug "chmod 440 #{fetch(:shared_path)}/config/*"
-      # execute "#{sudo_cmd} chmod 440 #{fetch(:shared_path)}/config/*"
-
       # Needs write permissions
       debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
       execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
@@ -94,11 +87,30 @@ namespace :app_home do
     end
   end
 
+  desc 'Correct public folder permissions'
+  task :correct_public_folder_permissions do
+    on roles(:app) do
+      within release_path do
+        sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+        debug '#' * 50
+        set :public_folder_path, "#{release_path}/public"
+
+        debug '#' * 50
+        chown_command = "chown -Rf nobody.#{fetch(:app_group_owner)} #{fetch(:public_folder_path)}/*"
+        debug chown_command
+        execute "#{sudo_cmd} #{chown_command}"
+
+        debug '#' * 50
+      end
+    end
+  end
+
   task :reload_server_cache do
     on roles(:app), in: :sequence, wait: 5 do
       debug '#' * 100
-      debug "curl https://in.xfel.eu/#{fetch(:app_name_uri)} -v"
-      execute :curl, "https://in.xfel.eu/#{fetch(:app_name_uri)} -v"
+      debug "wget -v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
+      execute :wget, "-v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
       debug 'Application visited successfully...'
       debug '#' * 100
     end
