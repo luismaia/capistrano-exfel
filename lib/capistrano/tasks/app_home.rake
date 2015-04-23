@@ -109,6 +109,10 @@ namespace :app_home do
   task :reload_server_cache do
     on roles(:app), in: :sequence, wait: 5 do
       debug '#' * 100
+      debug 'rake tmp:clear'
+      execute_rake_command('tmp:clear')
+
+      debug '#' * 100
       debug "wget -v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
       execute :wget, "-v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
       debug 'Application visited successfully...'
