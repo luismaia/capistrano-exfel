@@ -36,13 +36,13 @@ namespace :application do
 
       invoke :deploy
       invoke 'app_home:correct_shared_permissions'
+      invoke 'app_home:clear_tmp_files'
       invoke 'application:restart'
     end
   end
 
   desc 'Restarts the application, including reloading server cache'
   task :restart do
-    invoke 'app_home:clear_tmp_files'
     # invoke 'app_home:restart'
     invoke 'apache:restart'
     invoke 'app_home:reload_server_cache'
@@ -103,9 +103,7 @@ namespace :load do
     end
 
     # Build default application URI
-    default_uri = "#{fetch(:app_name)}"
-    default_uri = "#{get_rails_env_abbr}_#{fetch(:app_name)}" unless get_rails_env_abbr.blank?
-    set :default_app_uri, -> { "#{default_uri}" }
+    set :default_app_uri, -> { get_rails_default_app_name }
 
     set :app_name_uri, -> do
       ask("Please specify the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))
