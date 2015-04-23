@@ -104,8 +104,8 @@ namespace :load do
 
     # Build default application URI
     set :default_app_uri, -> do
-      "#{fetch(:app_name)}" if get_rails_env_abbr.blank?
-      "#{get_rails_env_abbr}_#{fetch(:app_name)}" unless get_rails_env_abbr.blank?
+      "#{fetch(:app_name)}" if get_rails_env_abbr.nil?
+      "#{get_rails_env_abbr}_#{fetch(:app_name)}" unless get_rails_env_abbr.nil?
     end
 
     set :app_name_uri, -> do
