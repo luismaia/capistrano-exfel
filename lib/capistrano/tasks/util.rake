@@ -11,13 +11,13 @@ def get_command_output(command)
 end
 
 def get_rails_default_app_name
-  "#{fetch(:app_name)}" if get_rails_env_abbr.nil?
-  "#{get_rails_env_abbr}_#{fetch(:app_name)}" unless get_rails_env_abbr.nil?
+  return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
+  "#{get_rails_env_abbr}_#{fetch(:app_name)}"
 end
 
 def get_rails_default_db_name
-  "#{fetch(:app_name)}" if get_rails_env_abbr.nil?
-  "#{fetch(:app_name)}_#{get_rails_env_abbr}" unless get_rails_env_abbr.nil?
+  return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
+  "#{fetch(:app_name)}_#{get_rails_env_abbr}"
 end
 
 def get_rails_env_abbr(rails_env_abbr = nil)
@@ -29,7 +29,7 @@ def get_rails_env_abbr(rails_env_abbr = nil)
   when 'test'
     'test'
   else
-    ''
+    'prod'
   end
 end
 
