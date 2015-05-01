@@ -10,12 +10,12 @@ def get_command_output(command)
   capture("#{command}").strip
 end
 
-def get_rails_default_app_name
+def rails_default_app_name
   return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
   "#{get_rails_env_abbr}_#{fetch(:app_name)}"
 end
 
-def get_rails_default_db_name
+def rails_default_db_name
   return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
   "#{fetch(:app_name)}_#{get_rails_env_abbr}"
 end

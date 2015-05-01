@@ -48,8 +48,8 @@ namespace :database do
       debug 'Create and configure database.yml file'
 
       default_host = '127.0.0.1'
-      default_database = get_rails_default_db_name
-      default_username = get_rails_default_db_name
+      default_database = rails_default_db_name
+      default_username = rails_default_db_name
       default_password = ''
 
       set :db_orig_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)

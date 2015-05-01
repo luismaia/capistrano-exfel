@@ -83,6 +83,10 @@ namespace :app_home do
       debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
       execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
 
+      # Give write permissions to groups
+      debug "chmod g+ws #{fetch(:shared_config_path)}"
+      execute "#{sudo_cmd} chown -Rf g+w #{fetch(:shared_path)}/tmp/"
+
       debug '#' * 50
     end
   end

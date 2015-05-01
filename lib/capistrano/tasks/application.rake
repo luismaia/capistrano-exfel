@@ -103,7 +103,7 @@ namespace :load do
     end
 
     # Build default application URI
-    set :default_app_uri, -> { get_rails_default_app_name }
+    set :default_app_uri, -> { rails_default_app_name }
 
     set :app_name_uri, -> do
       ask("Please specify the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))
