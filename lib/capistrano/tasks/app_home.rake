@@ -131,8 +131,8 @@ namespace :app_home do
   task :reload_server_cache do
     on roles(:app), in: :sequence, wait: 5 do
       debug '#' * 100
-      debug "wget -v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
-      execute :wget, "-v -p --spider https://in.xfel.eu/#{fetch(:app_name_uri)}"
+      debug "wget -v -p --spider #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
+      execute :wget, "-v -p --spider #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
       debug 'Application visited successfully...'
       debug '#' * 100
     end
@@ -143,7 +143,7 @@ namespace :app_home do
       info '#' * 100
       info '#' * 10 + ' => Application Successfully deployed...'
       info '#' * 100
-      info '#' * 10 + " => visit: https://in.xfel.eu/#{fetch(:app_name_uri)}"
+      info '#' * 10 + " => visit: #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
       info '#' * 100
     end
   end

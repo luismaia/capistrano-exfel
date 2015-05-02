@@ -131,6 +131,9 @@ namespace :apache do
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
 
+      server_name = string_between_markers(fetch(:app_domain), '://', '/')
+
+      execute "sed -i 's/<<SERVER_NAME>>/#{server_name}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's/<<APPLICATION_NAME>>/#{fetch(:app_name_uri)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
 

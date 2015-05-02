@@ -1,4 +1,4 @@
-# XFEL application specific tasks
+# EXFEL application specific tasks
 namespace :application do
   # Task 'application:deploy_first_time' deploys an application for the first time in the configured server(s).
   # This task besides deploying the application also make all the necessary configurations
@@ -97,7 +97,8 @@ namespace :load do
 
     # Set application related information
     set :app_domain, -> do
-      ask('Please specify the application domain (i.e. https://in.xfel.eu/)', 'https://in.xfel.eu/')
+      ask('Please specify the application domain with an "/" at the end (i.e. https://example.com/)',
+          'https://example.com/')
     end
 
     # Build default application URI

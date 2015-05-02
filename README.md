@@ -75,7 +75,7 @@ The most important configurable options and their defaults:options can be added 
     set :app_name, 'my_app_name' # If not specified will ask for it
 
     # Set application related information
-    # set :app_domain, 'https://in.xfel.eu/'
+    # set :app_domain, 'https://domain.com/'
     # set :app_name_uri, 'my_app_uri'
 
     # Set git repository information

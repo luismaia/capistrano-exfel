@@ -39,6 +39,10 @@ def execute_rake_command(task)
   end
 end
 
+def string_between_markers(complete_str, marker1, marker2)
+  complete_str[/#{Regexp.escape(marker1)}(.*?)#{Regexp.escape(marker2)}/m, 1]
+end
+
 namespace :util do
   desc 'Report Server Uptimes'
   task :uptime do

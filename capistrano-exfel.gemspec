@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Capistrano::Exfel::VERSION
   spec.authors       = ['Luis Maia']
   spec.email         = ['luisgoncalo.maia@gmail.com']
-  spec.summary       = 'Deploy Ruby on Rails 4 Applications in European-XFEL Virtual Machines'
-  spec.description   = 'Deployment of Ruby on Rails 4 Applications in European-XFEL Virtual Machines ' \
+  spec.summary       = 'Deploy Ruby on Rails 4 Applications in EXFEL Virtual Machines'
+  spec.description   = 'Deployment of Ruby on Rails 4 Applications in EXFEL Virtual Machines ' \
                         '(Scientific Linux + Apache + RVM + Phusion Passenger) using Capistrano3 and Kerberos'
   spec.homepage      = ''
   spec.license       = 'MIT'
