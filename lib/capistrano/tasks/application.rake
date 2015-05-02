@@ -33,9 +33,9 @@ namespace :application do
       # The consequence is that users will be logged out automatically from the Application after the upgrade.
       # This is important to avoid errors with old validity_token in forms
       invoke 'secrets:update_app_secret'
+      invoke 'app_home:correct_shared_permissions'
 
       invoke :deploy
-      invoke 'app_home:correct_shared_permissions'
       invoke 'app_home:clear_tmp_files'
       invoke 'application:restart'
     end
