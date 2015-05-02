@@ -71,23 +71,32 @@ namespace :app_home do
   desc 'Correct shared folder permissions'
   task :correct_shared_permissions do
     on roles(:app), in: :sequence, wait: 5 do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      within release_path do
+        sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
-      debug '#' * 50
+        debug '#' * 50
 
-      # Needs access to the folder due to the first write and log rotation
-      debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
-      execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
+        # Needs access to the folder due to the first write and log rotation
+        debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
+        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
 
-      # Needs write permissions
-      debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
-      execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
+        # Needs write permissions
+        debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
+        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
 
-      # Give write permissions to groups
-      debug "chmod g+ws #{fetch(:shared_config_path)}"
-      execute "#{sudo_cmd} chmod -Rf g+w #{fetch(:shared_path)}/tmp/"
+        # Since the cache is local to any App instalation it's necessary to update their permissions
+        app_cache_folder = release_path.join('tmp/cache')
 
-      debug '#' * 50
+        # Give write permissions to groups
+        debug "chmod g+ws #{app_cache_folder}"
+        execute "#{sudo_cmd} chmod -Rf g+w #{app_cache_folder}"
+
+        # Phusion Passenger (as nobody) needs write permissions to cache folder
+        debug "chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
+        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
+
+        debug '#' * 50
+      end
     end
   end
 

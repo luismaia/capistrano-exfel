@@ -12,7 +12,7 @@ Add these lines to your application's Gemfile:
     gem 'capistrano', '~> 3.4.0'
     gem 'capistrano-rails', '~> 1.1.2'
     gem 'capistrano-rvm', '~> 0.1.2'
-    gem 'capistrano-exfel', '~> 0.0.10'
+    gem 'capistrano-exfel', '~> 0.0.11'
 
 And then execute:
 
@@ -79,7 +79,7 @@ The most important configurable options and their defaults:options can be added 
     # set :app_name_uri, 'my_app_uri'
 
     # Set git repository information
-    set :repo_url, 'exflgit:/data/git/calibration' # 'git@example.com:me/my_repo.git'
+    set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo.git'
 
     # Default branch is :master
     # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call

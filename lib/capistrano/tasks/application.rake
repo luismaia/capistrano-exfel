@@ -33,10 +33,8 @@ namespace :application do
       # The consequence is that users will be logged out automatically from the Application after the upgrade.
       # This is important to avoid errors with old validity_token in forms
       invoke 'secrets:update_app_secret'
-      invoke 'app_home:correct_shared_permissions'
-
       invoke :deploy
-      invoke 'app_home:clear_tmp_files'
+      invoke 'app_home:correct_shared_permissions'
       invoke 'application:restart'
     end
   end
@@ -139,7 +137,7 @@ namespace :load do
     set :linked_files, -> { %w(config/database.yml config/secrets.yml) }
 
     # Default value for linked_dirs is []
-    set :linked_dirs, -> { %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system) }
+    set :linked_dirs, -> { %w(log tmp/pids tmp/sockets vendor/bundle public/system) }
 
     # Default value for keep_releases is 5
     set :keep_releases, -> { 5 }
