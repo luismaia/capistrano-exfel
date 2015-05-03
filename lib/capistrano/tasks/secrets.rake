@@ -35,10 +35,10 @@ namespace :secrets do
         upload! StringIO.new(File.read("#{fetch(:secrets_original_file_path)}")), "#{fetch(:secrets_file_path)}"
       end
 
-      execute "sed -i 's/<<APP_NAME>>/#{fetch(:app_name)}/g' #{fetch(:secrets_file_path)}"
-      execute "sed -i 's/<<APP_DOMAIN>>/#{fetch(:app_domain)}/g' #{fetch(:secrets_file_path)}"
-      execute "sed -i 's/<<APP_NAME_URI>>/#{fetch(:app_name_uri)}/g' #{fetch(:secrets_file_path)}"
-      execute "sed -i 's/<<APP_FULL_URL>>/#{fetch(:app_full_url)}/g' #{fetch(:secrets_file_path)}"
+      execute "sed -i 's|<<APP_NAME>>|#{fetch(:app_name)}|g' #{fetch(:secrets_file_path)}"
+      execute "sed -i 's|<<APP_DOMAIN>>|#{fetch(:app_domain)}|g' #{fetch(:secrets_file_path)}"
+      execute "sed -i 's|<<APP_NAME_URI>>|#{fetch(:app_name_uri)}|g' #{fetch(:secrets_file_path)}"
+      execute "sed -i 's|<<APP_FULL_URL>>|#{fetch(:app_full_url)}|g' #{fetch(:secrets_file_path)}"
 
       debug '#' * 50
     end
