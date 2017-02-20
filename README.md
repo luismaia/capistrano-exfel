@@ -84,9 +84,6 @@ The most important configurable options and their defaults:options can be added 
     # Default branch is :master
     # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-    # Default value for :scm is :git
-    # set :scm, :git
-
     # Default value for :format is :pretty
     # set :format, :pretty
 
@@ -106,6 +103,11 @@ The most important configurable options and their defaults:options can be added 
     # set :rvm_type, :system
     set :rvm_ruby_version, '2.1.5' # If not specified will ask for it
     # set :rvm_roles, [:app, :web]
+
+As an example, to configure GIT plugin, add the following to the Capfile:
+
+    require 'capistrano/scm/git'
+    install_plugin Capistrano::SCM::Git
 
 ## Contributing
 

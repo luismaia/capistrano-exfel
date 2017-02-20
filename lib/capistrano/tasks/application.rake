@@ -69,7 +69,6 @@ namespace :application do
       info "shared_path => #{fetch(:shared_path)}"
       info "repo_url => #{fetch(:repo_url)}"
       info "branch => #{fetch(:branch)}"
-      info "scm => #{fetch(:scm)}"
       info "format => #{fetch(:format)}"
       info "log_level => #{fetch(:log_level)}"
       info "pty => #{fetch(:pty)}"
@@ -121,9 +120,6 @@ namespace :load do
 
     # Default branch is :master
     ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
-
-    # Default value for :scm is :git
-    set :scm, -> { :git }
 
     # Default value for :format is :pretty
     set :format, -> { :pretty }
