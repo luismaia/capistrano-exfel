@@ -93,7 +93,7 @@ namespace :apache do
 
       set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
       http_file = File.expand_path('../../recipes/apache_http.conf', __FILE__)
-      upload! StringIO.new(File.read(http_file)), "#{fetch(:shared_apache_conf_file)}"
+      upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
@@ -126,7 +126,7 @@ namespace :apache do
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
       http_ssl_file = File.expand_path('../../recipes/apache_ssl.conf', __FILE__)
-      upload! StringIO.new(File.read(http_ssl_file)), "#{fetch(:shared_apache_conf_ssl_file)}"
+      upload! StringIO.new(File.read(http_ssl_file)), fetch(:shared_apache_conf_ssl_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
@@ -233,7 +233,7 @@ namespace :apache do
           end
         end
 
-        error 'ServerSignature was not found' if fetch(:num_replacements) == 0
+        error 'ServerSignature was not found' if fetch(:num_replacements).zero?
       end
 
       # Don't give away too much information about all the subcomponents we are running.
@@ -256,7 +256,7 @@ namespace :apache do
           set :num_replacements, fetch(:num_replacements) + 1
         end
 
-        error 'ServerTokens was not found' if fetch(:num_replacements) == 0
+        error 'ServerTokens was not found' if fetch(:num_replacements).zero?
       end
 
       # Do not allow browsing outside the document root
@@ -268,9 +268,9 @@ namespace :apache do
       #   AllowOverride None
       # </Directory>
       #
-      message_line_1 = '# Default Directory configuration changed via Capistrano.'
+      message_line1 = '# Default Directory configuration changed via Capistrano.'
 
-      set :server_dir_secure_configuration, get_num_occurrences_in_file(fetch(:httpd_conf_file), message_line_1)
+      set :server_dir_secure_configuration, get_num_occurrences_in_file(fetch(:httpd_conf_file), message_line1)
 
       if fetch(:server_token_prod) == 1
         info 'The correct directory configuration is already correctly set'
@@ -314,7 +314,7 @@ namespace :apache do
 </Directory>
 
         EOF
-        upload! StringIO.new(new_directory_configs), "#{fetch(:tmp_dir_new_config)}"
+        upload! StringIO.new(new_directory_configs), fetch(:tmp_dir_new_config).to_s
 
         # Update the new configuration file to have the original configuration commented
         debug "cat #{fetch(:tmp_dir_new_config)} >> #{fetch(:tmp_dir_original_commented_config)}"
@@ -326,7 +326,7 @@ namespace :apache do
         debug "Special sed parameter is: ''#{special_sed_param}''"
 
         # Replace the old original directory configuration for a specific message (in the temporary file)
-        message_complete = "#{message_line_1}\\n#\\n"
+        message_complete = "#{message_line1}\\n#\\n"
         command_to_replace = "out=$(sed -e :a -e '$!N;s/\\n/.*/;ta' #{fetch(:tmp_dir_original_config)} | "\
                              "sed -e :a -e '$!N;s/\//./;ta'); sed -i '/<Directory .>.*/ {#{special_sed_param} "\
                              "s/'$out'/#{message_complete}/g}' #{fetch(:tmp_httpd_file)}"
@@ -334,7 +334,7 @@ namespace :apache do
         execute command_to_replace
 
         # Search for the line where the message was inserted
-        command = "grep -n '#{message_line_1}' #{fetch(:tmp_httpd_file)} | cut -d':' -f 1"
+        command = "grep -n '#{message_line1}' #{fetch(:tmp_httpd_file)} | cut -d':' -f 1"
         debug command
         line_with_match = get_command_output(command).to_i
         next_line = line_with_match + 1

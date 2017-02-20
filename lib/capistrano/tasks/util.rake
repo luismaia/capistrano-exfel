@@ -7,16 +7,16 @@ def get_num_occurrences_in_file(file_path, string)
 end
 
 def get_command_output(command)
-  capture("#{command}").strip
+  capture(command.to_s).strip
 end
 
 def rails_default_app_name
-  return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
+  return fetch(:app_name).to_s if get_rails_env_abbr == 'prod'
   "#{get_rails_env_abbr}_#{fetch(:app_name)}"
 end
 
 def rails_default_db_name
-  return "#{fetch(:app_name)}" if get_rails_env_abbr == 'prod'
+  return fetch(:app_name).to_s if get_rails_env_abbr == 'prod'
   "#{fetch(:app_name)}_#{get_rails_env_abbr}"
 end
 

@@ -27,12 +27,12 @@ namespace :secrets do
     on roles(:app) do
       debug '#' * 50
       debug 'Create and configure secrets.yml file'
-      secrets_file_path = "#{fetch(:secrets_file_path)}"
+      secrets_file_path = fetch(:secrets_file_path).to_s
 
       set :secrets_original_file_path, File.expand_path('../../recipes/config/secrets_example.yml', __FILE__)
 
       unless remote_file_exists?(secrets_file_path)
-        upload! StringIO.new(File.read("#{fetch(:secrets_original_file_path)}")), "#{fetch(:secrets_file_path)}"
+        upload! StringIO.new(File.read(fetch(:secrets_original_file_path).to_s)), fetch(:secrets_file_path).to_s
       end
 
       execute "sed -i 's|<<APP_NAME>>|#{fetch(:app_name)}|g' #{fetch(:secrets_file_path)}"
@@ -51,12 +51,12 @@ namespace :secrets do
 
       pattern = 'secret_key_base:.*'
       new_secret = "secret_key_base: '#{SecureRandom.hex(64)}'"
-      secrets_file_path = "#{fetch(:secrets_file_path)}"
+      secrets_file_path = fetch(:secrets_file_path).to_s
 
       if remote_file_exists?(secrets_file_path)
         num_occurrences = get_num_occurrences_in_file(secrets_file_path, pattern)
 
-        if num_occurrences == 0
+        if num_occurrences.zero?
           error "no secret token found in #{secrets_file_path}"
           exit 1
         end

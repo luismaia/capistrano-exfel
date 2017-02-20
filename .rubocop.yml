@@ -18,3 +18,8 @@ Style/Next:
 # Use the lambda method for multi-line lambdas.
 Style/Lambda:
   Enabled: false
+
+#
+# Block has too many lines.
+Metrics/BlockLength:
+  Max: 100 # Default 25

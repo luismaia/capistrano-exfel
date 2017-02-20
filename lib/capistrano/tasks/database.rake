@@ -58,7 +58,7 @@ namespace :database do
       set :database_username, ask('Database Username:', default_username)
       set :database_password, ask('Database Password:', default_password)
 
-      upload! StringIO.new(File.read("#{fetch(:db_orig_file_path)}")), "#{fetch(:database_file_path)}"
+      upload! StringIO.new(File.read(fetch(:db_orig_file_path).to_s)), fetch(:database_file_path).to_s
 
       execute "sed -i 's/<<database_name>>/#{fetch(:database_name)}/g' #{fetch(:database_file_path)}"
       execute "sed -i 's/<<database_username>>/#{fetch(:database_username)}/g' #{fetch(:database_file_path)}"
