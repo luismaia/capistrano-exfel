@@ -4,4 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 # Use Rubocop to validate ruby code syntax
-gem 'rubocop', '~> 0.30.1', require: false, group: :development
+gem 'rubocop', '~> 0.47.1', require: false, group: :development
