@@ -29,7 +29,8 @@ namespace :apache do
 
       set :shared_passenger_file, "#{fetch(:shared_apache_path)}/00-passenger.conf"
       passenger_file = File.expand_path('../../recipes/co7/00-passenger.conf', __FILE__)
-      upload! StringIO.new(File.read(passenger_file)), fetch(:shared_apache_conf_file).to_s
+
+      upload! StringIO.new(File.read(passenger_file)), fetch(:shared_passenger_file).to_s
 
       debug "chmod g+w #{fetch(:shared_passenger_file)}"
       execute "chmod g+w #{fetch(:shared_passenger_file)}"
@@ -37,9 +38,9 @@ namespace :apache do
       passenger_root = get_command_output('/usr/local/rvm/bin/rvm default do passenger-config --root')
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
 
-      debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_apache_conf_file)}"
-      execute "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_apache_conf_file)}"
-      execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_apache_conf_file)}"
+      debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
+      execute "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
+      execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_passenger_file)}"
 
       execute "#{sudo_cmd} ln -sfn #{fetch(:shared_passenger_file)} /etc/httpd/conf.modules.d/"
 
@@ -124,8 +125,14 @@ namespace :apache do
         info 'Apache original configuration file backed up at: /etc/httpd/conf/httpd.conf_bck'
       end
 
+      # Create a temporary copy of the Apache configuration file
+      set :tmp_httpd_file, '/tmp/httpd.conf'
       httpd_safe_file = File.expand_path('../../recipes/co7/httpd.conf', __FILE__)
-      upload! StringIO.new(File.read(httpd_safe_file)), fetch(:httpd_conf_file).to_s
+
+      upload! StringIO.new(File.read(httpd_safe_file)), fetch(:tmp_httpd_file).to_s
+
+      # Replace the original Apache configuration file
+      execute "#{sudo_cmd} mv -f #{fetch(:tmp_httpd_file)} #{fetch(:httpd_conf_file)}"
 
     end
   end
