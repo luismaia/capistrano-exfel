@@ -12,7 +12,7 @@ Add these lines to your application's Gemfile:
     gem 'capistrano', '~> 3.4.0'
     gem 'capistrano-rails', '~> 1.1.2'
     gem 'capistrano-rvm', '~> 0.1.2'
-    gem 'capistrano-exfel', '~> 0.0.14'
+    gem 'capistrano-exfel', '~> 0.0.15'
 
 And then execute:
 
@@ -24,10 +24,16 @@ Or install it yourself as:
 
 ## Usage
 
-Add this line to your `Capfile`:
+Add this line to your `Capfile` for Scientific Linux 6 machines:
 
     # Load Capistrano Exfel Scientific Linux 6 tasks
     require 'capistrano/exfel/sl6'
+
+Add this line to your `Capfile` for CentOS 7 machines::
+
+    # Load Capistrano Exfel CentOS tasks
+    require 'capistrano/exfel/co7'
+
 
 This gem will reuse `capistrano-rails` and `capistrano-rvm` tasks to build the following tasks:
 
