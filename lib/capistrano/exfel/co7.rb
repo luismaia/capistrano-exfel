@@ -12,7 +12,7 @@ require 'capistrano/rvm'
 require 'capistrano/rails'
 
 load File.expand_path('../../tasks/apache.rake', __FILE__)
-load File.expand_path('../../tasks/apache_sl6.rake', __FILE__)
+load File.expand_path('../../tasks/apache_co7.rake', __FILE__)
 load File.expand_path('../../tasks/app_home.rake', __FILE__)
 load File.expand_path('../../tasks/application.rake', __FILE__)
 load File.expand_path('../../tasks/database.rake', __FILE__)
