@@ -12,7 +12,7 @@ Add these lines to your application's Gemfile:
     gem 'capistrano', '~> 3.4.0'
     gem 'capistrano-rails', '~> 1.1.2'
     gem 'capistrano-rvm', '~> 0.1.2'
-    gem 'capistrano-exfel', '~> 0.0.15'
+    gem 'capistrano-exfel', '~> 0.0.16'
 
 And then execute:
 
