@@ -8,12 +8,11 @@ require 'capistrano/deploy'
 require 'capistrano/rvm'
 
 case fetch(:rails_env).to_s
-when 'production'
-when 'test'
+when 'production', 'test'
   # We're going to use the full capistrano/rails since
   # it includes the asset compilation, DB migrations and bundler
   require 'capistrano/rails'
-else #when 'development'
+else # when 'development'
   # we avoid asset precompilation in dev environment
   require 'capistrano/bundler'
   require 'capistrano/rails/migrations'
