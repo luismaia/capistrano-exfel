@@ -1,7 +1,7 @@
 # Capistrano::Exfel
 
 Deploys Ruby on Rails Applications in EXFEL VMs using Capistrano3 throw username/password authentication.
-The standard EXFEL VMs consist of Scientific Linux 6 with Apache.
+The standard EXFEL VMs consist of Scientific Linux 6 or CentOS 7 with Apache.
 Installation of Phusion Passenger and RVM are also required to this gem.
 
 ## Installation
