@@ -7,9 +7,17 @@ require 'capistrano/deploy'
 # Includes tasks from other gems included in your Gemfile
 require 'capistrano/rvm'
 
-# We're going to use the full capistrano/rails since
-# it includes the asset compilation, DB migrations and bundler
-require 'capistrano/rails'
+case fetch(:rails_env).to_s
+when 'production'
+when 'test'
+  # We're going to use the full capistrano/rails since
+  # it includes the asset compilation, DB migrations and bundler
+  require 'capistrano/rails'
+else #when 'development'
+  # we avoid asset precompilation in dev environment
+  require 'capistrano/bundler'
+  require 'capistrano/rails/migrations'
+end
 
 load File.expand_path('../../tasks/apache.rake', __FILE__)
 load File.expand_path('../../tasks/apache_co7.rake', __FILE__)

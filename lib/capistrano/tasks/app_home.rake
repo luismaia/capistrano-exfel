@@ -84,16 +84,20 @@ namespace :app_home do
         debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
         execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
 
-        # Since the cache is local to any App instalation it's necessary to update their permissions
+        # Since the cache is local to any App installation it's necessary to update permissions
         app_cache_folder = release_path.join('tmp/cache')
 
-        # Give write permissions to groups
-        debug "chmod g+ws #{app_cache_folder}"
-        execute "#{sudo_cmd} chmod -Rf g+w #{app_cache_folder}"
+        # make sure the folder exists (won't exists if the assets are not precompiled)
+        debug "mkdir -p #{app_cache_folder}"
+        execute "#{sudo_cmd} mkdir -p #{app_cache_folder}"
 
         # Phusion Passenger (as nobody) needs write permissions to cache folder
         debug "chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
         execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
+
+        # Give write permissions to groups
+        debug "chmod g+ws #{app_cache_folder}"
+        execute "#{sudo_cmd} chmod -Rf g+w #{app_cache_folder}"
 
         debug '#' * 50
       end
