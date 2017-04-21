@@ -22,4 +22,10 @@ Style/Lambda:
 #
 # Block has too many lines.
 Metrics/BlockLength:
-  Max: 100 # Default 25
+  Max: 160 # Default 25
+
+#
+# Use 2 spaces for indentation in a heredoc by using some library(e.g. ActiveSupport's String#strip_heredoc).
+Style/IndentHeredoc:
+  Exclude:
+    - 'lib/capistrano/tasks/apache_sl6.rake'

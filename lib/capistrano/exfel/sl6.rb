@@ -7,15 +7,15 @@ require 'capistrano/deploy'
 # Includes tasks from other gems included in your Gemfile
 require 'capistrano/rvm'
 
-# We're going to use the full capistrano/rails since
-# it includes the asset compilation, DB migrations and bundler
 case fetch(:rails_env).to_s
 when 'production'
 when 'test'
+  # We're going to use the full capistrano/rails since
+  # it includes the asset compilation, DB migrations and bundler
   require 'capistrano/rails'
 else #when 'development'
+  # we avoid asset precompilation in dev environment
   require 'capistrano/bundler'
-  # require 'capistrano/rails/assets'
   require 'capistrano/rails/migrations'
 end
 

@@ -188,7 +188,7 @@ namespace :apache do
         # Save to a file the new desired configuration
         new_directory_configs = <<-EOF
 
-#Do not allow browsing outside the document root
+# Do not allow browsing outside the document root
 <Directory />
   Order Deny,Allow
   Deny from all

@@ -115,5 +115,4 @@ namespace :apache do
       info '#' * 50
     end
   end
-
 end

@@ -159,7 +159,7 @@ namespace :load do
     # RVM related information
     set :rvm_type, -> { :system }
     set :rvm_ruby_version, -> { ask('Please specify the Ruby version (i.e. 2.1.5)', '') }
-    set :rvm_roles, [:app, :web]
+    set :rvm_roles, %i(app web)
     # set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
 
     # Apache related information
