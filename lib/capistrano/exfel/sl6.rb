@@ -9,7 +9,15 @@ require 'capistrano/rvm'
 
 # We're going to use the full capistrano/rails since
 # it includes the asset compilation, DB migrations and bundler
-require 'capistrano/rails'
+case fetch(:rails_env).to_s
+when 'production'
+when 'test'
+  require 'capistrano/rails'
+else #when 'development'
+  require 'capistrano/bundler'
+  # require 'capistrano/rails/assets'
+  require 'capistrano/rails/migrations'
+end
 
 load File.expand_path('../../tasks/apache.rake', __FILE__)
 load File.expand_path('../../tasks/apache_sl6.rake', __FILE__)
