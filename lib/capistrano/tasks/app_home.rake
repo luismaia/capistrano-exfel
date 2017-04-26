@@ -142,8 +142,24 @@ namespace :app_home do
     end
   end
 
+  task :deploy_first_time_start_msg do
+    on roles(:msg) do
+      info '#' * 100
+      info '#' * 10 + ' => Start Application first time deployment...'
+      info '#' * 100
+    end
+  end
+
+  task :deploy_start_msg do
+    on roles(:msg) do
+      info '#' * 100
+      info '#' * 10 + ' => Start Application re-deployment...'
+      info '#' * 100
+    end
+  end
+
   task :deploy_success_msg do
-    on roles(:app), in: :sequence do
+    on roles(:msg) do
       info '#' * 100
       info '#' * 10 + ' => Application Successfully deployed...'
       info '#' * 100

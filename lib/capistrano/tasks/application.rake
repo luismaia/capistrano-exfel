@@ -5,10 +5,8 @@ namespace :application do
   desc 'Configures Apache and deploys the Application for the first time in the configured server(s) ' \
        'with the right permissions'
   task :deploy_first_time do
-      # info '#' * 100
-      # info '#' * 10 + ' => Start Application first time deployment...'
-      # info '#' * 100
 
+    invoke 'app_home:deploy_first_time_start_msg'
     invoke 'app_home:create_all'
     invoke 'database:configure_mysql'
     invoke 'secrets:configure'
@@ -22,10 +20,7 @@ namespace :application do
   # Task 'application:deploy' deploys a new version of the application in the configured server(s)
   desc 'Re-deploys existent Application in the configured server(s)'
   task :deploy do
-      # info '#' * 100
-      # info '#' * 10 + ' => Start Application re-deployment...'
-      # info '#' * 100
-
+    invoke 'app_home:deploy_start_msg'
       # This is advisable to kill users cookies after the upgrade.
       # The consequence is that users will be logged out automatically from the Application after the upgrade.
       # This is important to avoid errors with old validity_token in forms
@@ -124,6 +119,7 @@ namespace :load do
     set :default_host, '127.0.0.1'
     set :default_database, -> { rails_default_db_name }
     set :default_username, -> { rails_default_db_name }
+    set :default_password, -> { '' }
 
     set :database_host, -> { ask('Database host:', fetch(:default_host)) }
     set :database_name, -> { ask('Database Name:', fetch(:default_database)) }
