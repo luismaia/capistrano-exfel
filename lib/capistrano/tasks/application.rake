@@ -65,6 +65,7 @@ namespace :application do
       info "default_app_uri => #{fetch(:default_app_uri)}"
       info "app_name_uri => #{fetch(:app_name_uri)}"
       info "app_full_url => #{fetch(:app_full_url)}"
+      info "secrets_key_base => #{fetch(:secrets_key_base)}"
       info "deploy_to => #{fetch(:deploy_to)}"
       info "shared_path => #{fetch(:shared_path)}"
       info "repo_url => #{fetch(:repo_url)}"
@@ -92,11 +93,11 @@ namespace :load do
     set :password, -> { ask('password', nil, echo: false) }
 
     # Application Name
-    set :app_name, -> { ask('Please specify the application name (i.e. my_app)', 'my_app') }
+    set :app_name, -> { ask('the application name (i.e. my_app)', 'my_app') }
 
     # Set application related information
     set :app_domain, -> do
-      ask('Please specify the application domain with an "/" at the end (i.e. https://example.com/)',
+      ask('application domain with an "/" at the end (i.e. https://example.com/)',
           'https://example.com/')
     end
 
@@ -104,8 +105,10 @@ namespace :load do
     set :default_app_uri, -> { rails_default_app_name }
 
     set :app_name_uri, -> do
-      ask("Please specify the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))
+      ask("the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))
     end
+
+    set :secrets_key_base, -> { ask('application secrets key base', SecureRandom.hex(64))  }
 
     set :app_full_url, -> { "#{fetch(:app_domain)}#{fetch(:app_name_uri)}" }
 
@@ -158,7 +161,7 @@ namespace :load do
 
     # RVM related information
     set :rvm_type, -> { :system }
-    set :rvm_ruby_version, -> { ask('Please specify the Ruby version (i.e. 2.1.5)', '') }
+    set :rvm_ruby_version, -> { ask('the Ruby version (i.e. 2.1.5)', '') }
     set :rvm_roles, %i(app web)
     # set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
 

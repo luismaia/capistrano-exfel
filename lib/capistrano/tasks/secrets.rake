@@ -50,7 +50,7 @@ namespace :secrets do
       debug '#' * 50
 
       pattern = 'secret_key_base:.*'
-      new_secret = "secret_key_base: '#{SecureRandom.hex(64)}'"
+      new_secret = "secret_key_base: '#{fetch(:secrets_key_base)}'"
       secrets_file_path = fetch(:secrets_file_path).to_s
 
       if remote_file_exists?(secrets_file_path)
