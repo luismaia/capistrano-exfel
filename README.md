@@ -14,13 +14,17 @@ Add these lines to your application's Gemfile:
     gem 'capistrano-rvm', '~> 0.1.2'
     gem 'capistrano-exfel', '~> 0.0.17'
 
+
 And then execute:
 
-    $ bundle
-
+```bash
+$ bundle
+```
 Or install it yourself as:
 
-    $ gem install capistrano-exfel
+```bash
+$ gem install capistrano-exfel
+```
 
 ## Usage
 
@@ -73,42 +77,44 @@ Additional Tasks:
 
 The most important configurable options and their defaults:options can be added to the `deploy.rb` file:
 
-    # Set username and password
-    set :username, ask('username', 'maial') # If not specified will ask for it proposing the current user
-    set :password, ask('password', nil, echo: false) # If not specified will ask for it
+```ruby
+# Set username and password
+set :username, ask('username', 'maial') # If not specified will ask for it proposing the current user
+set :password, ask('password', nil, echo: false) # If not specified will ask for it
 
-    # Application Name
-    set :app_name, 'my_app_name' # If not specified will ask for it
+# Application Name
+set :app_name, 'my_app_name' # If not specified will ask for it
 
-    # Set application related information
-    # set :app_domain, 'https://domain.com/'
-    # set :app_name_uri, 'my_app_uri'
+# Set application related information
+# set :app_domain, 'https://domain.com/'
+# set :app_name_uri, 'my_app_uri'
 
-    # Set git repository information
-    set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo.git'
+# Set git repository information
+set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo.git'
 
-    # Default branch is :master
-    # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+# Default branch is :master
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
-    # Default value for :format is :pretty
-    # set :format, :pretty
+# Default value for :format is :pretty
+# set :format, :pretty
 
-    # Default value for :log_level is :debug
-    # set :log_level, :info
+# Default value for :log_level is :debug
+# set :log_level, :info
 
-    # Default value for :linked_files is []
-    # set :linked_files, %w(config/database.yml config/secrets.yml)
+# Default value for :linked_files is []
+# set :linked_files, %w(config/database.yml config/secrets.yml)
 
-    # Default value for linked_dirs is []
-    # set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
+# Default value for linked_dirs is []
+# set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
 
-    # Default value for keep_releases is 5
-    # set :keep_releases, 5
+# Default value for keep_releases is 5
+# set :keep_releases, 5
 
-    # RVM related information
-    # set :rvm_type, :system
-    set :rvm_ruby_version, '2.1.5' # If not specified will ask for it
-    # set :rvm_roles, [:app, :web]
+# RVM related information
+# set :rvm_type, :system
+set :rvm_ruby_version, '2.1.5' # If not specified will ask for it
+# set :rvm_roles, [:app, :web]
+```
 
 As an example, to configure GIT plugin, add the following to the Capfile:
 

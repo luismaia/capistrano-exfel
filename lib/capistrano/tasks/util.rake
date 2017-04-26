@@ -3,7 +3,7 @@ def remote_file_exists?(full_path)
 end
 
 def get_num_occurrences_in_file(file_path, string)
-  get_command_output("less #{file_path} | grep '#{string}' | wc -l").to_i
+  get_command_output("cat #{file_path} | grep '#{string}' | wc -l").to_i
 end
 
 def get_command_output(command)
