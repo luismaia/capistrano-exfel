@@ -16,7 +16,7 @@ namespace :apache do
 
   desc 'Check that we have the right permission to the folder the app should be deployed to'
   task :check_write_permissions_on_deploy do
-    on roles(:app) do |host|
+    on roles(:app), in: :sequence do |host|
       debug '#' * 50
       debug "Checking folder '#{fetch(:deploy_to)}' (where the application has to be deployed) "\
             "for the right permissions on Host '#{host}'"
@@ -68,6 +68,9 @@ namespace :apache do
   desc 'Configure Apache to start at bootup'
   task :chkconfig_on do
     on roles(:web) do
+
+      info 'In task apache:chkconfig_on'
+
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
@@ -103,7 +106,7 @@ namespace :apache do
 
   desc 'Create symbolic link to application public folder in Apache DocumentRoot folder'
   task :create_symbolic_link do
-    on roles(:web) do
+    on roles(:web), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       info '#' * 50

@@ -5,38 +5,29 @@ namespace :application do
   desc 'Configures Apache and deploys the Application for the first time in the configured server(s) ' \
        'with the right permissions'
   task :deploy_first_time do
-    on roles(:app, :web) do
-      info '#' * 100
-      info '#' * 10 + ' => Start Application first time deployment...'
-      info '#' * 100
 
-      invoke 'app_home:create_all'
-      invoke 'database:configure_mysql'
-      invoke 'secrets:configure'
-      invoke 'apache:configure_and_start'
-      invoke 'apache:check_write_permissions'
-      invoke :deploy
-      invoke 'app_home:correct_shared_permissions'
-      invoke 'application:restart'
-    end
+    invoke 'app_home:deploy_first_time_start_msg'
+    invoke 'app_home:create_all'
+    invoke 'database:configure_mysql'
+    invoke 'secrets:configure'
+    invoke 'apache:configure_and_start'
+    invoke 'apache:check_write_permissions'
+    invoke :deploy
+    invoke 'app_home:correct_shared_permissions'
+    invoke 'application:restart'
   end
 
   # Task 'application:deploy' deploys a new version of the application in the configured server(s)
   desc 'Re-deploys existent Application in the configured server(s)'
   task :deploy do
-    on roles(:app, :web) do
-      info '#' * 100
-      info '#' * 10 + ' => Start Application re-deployment...'
-      info '#' * 100
-
+    invoke 'app_home:deploy_start_msg'
       # This is advisable to kill users cookies after the upgrade.
       # The consequence is that users will be logged out automatically from the Application after the upgrade.
       # This is important to avoid errors with old validity_token in forms
-      invoke 'secrets:update_app_secret'
-      invoke :deploy
-      invoke 'app_home:correct_shared_permissions'
-      invoke 'application:restart'
-    end
+    invoke 'secrets:update_app_secret'
+    invoke :deploy
+    invoke 'app_home:correct_shared_permissions'
+    invoke 'application:restart'
   end
 
   desc 'Restarts the application, including reloading server cache'
@@ -55,7 +46,7 @@ namespace :application do
 
   desc 'Shows variables values generated without deploying anything'
   task :show_variables do
-    on roles(:app, :web) do
+    on roles(:app, :web), in: :sequence do
       info '#' * 100
       info "username => #{fetch(:username)}"
       info 'password => **********'
@@ -117,12 +108,23 @@ namespace :load do
 
     # Shared folder inside deployment directory
     set :shared_path, -> { File.join(fetch(:deploy_to), 'shared') }
+    set :shared_apache_path, -> { File.join(fetch(:shared_path), 'apache') }
 
     # Set git repository information
     set :repo_url, -> { '' }
 
     # Default branch is :master
     ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+
+    set :default_host, '127.0.0.1'
+    set :default_database, -> { rails_default_db_name }
+    set :default_username, -> { rails_default_db_name }
+    set :default_password, -> { '' }
+
+    set :database_host, -> { ask('Database host:', fetch(:default_host)) }
+    set :database_name, -> { ask('Database Name:', fetch(:default_database)) }
+    set :database_username, -> { ask('Database Username:', fetch(:default_username)) }
+    set :database_password, -> { ask('Database Password:', fetch(:default_password)) }
 
     # Default value for :format is :pretty
     set :format, -> { :pretty }
@@ -161,7 +163,7 @@ namespace :load do
 
     # RVM related information
     set :rvm_type, -> { :system }
-    set :rvm_ruby_version, -> { ask('the Ruby version (i.e. 2.1.5)', '') }
+    set :rvm_ruby_version, -> { ask('the Ruby version (i.e. 2.4.0)', '') }
     set :rvm_roles, %i(app web)
     # set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
 

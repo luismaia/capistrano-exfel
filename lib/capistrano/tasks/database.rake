@@ -8,56 +8,39 @@ namespace :database do
 
   desc 'Create MySQL specific database.yml in the shared path'
   task :configure_mysql do
-    on roles(:app) do
-      set :database_original_file_name, 'database_mysql.yml'
-      invoke 'database:configure_database_file'
-    end
+    set :database_original_file_name, 'database_mysql.yml'
+    invoke 'database:configure_database_file'
   end
 
   desc 'Create PostgreSQL specific database.yml in the shared path'
   task :configure_postgresql do
-    on roles(:app) do
-      set :database_original_file_name, 'database_postgresql.yml'
-      invoke 'database:configure_database_file'
-    end
+    set :database_original_file_name, 'database_postgresql.yml'
+    invoke 'database:configure_database_file'
   end
 
   desc 'Create SQLite specific database.yml in the shared path'
   task :configure_sqlite do
-    on roles(:app) do
-      set :database_original_file_name, 'database_sqlite.yml'
-      invoke 'database:configure_database_file'
-    end
+    set :database_original_file_name, 'database_sqlite.yml'
+    invoke 'database:configure_database_file'
   end
 
   # desc 'Configure database.yml in the shared path'
   task :configure_database_file do
-    on roles(:app) do
-      set :database_file_path, "#{fetch(:shared_path)}/config/database.yml"
+    set :database_file_path, "#{fetch(:shared_path)}/config/database.yml"
 
-      invoke 'database:set_permissions_pre_update'
-      invoke 'database:set_database_file'
-      invoke 'database:set_permissions_post_update'
-    end
+    invoke 'database:set_permissions_pre_update'
+    invoke 'database:set_database_file'
+    invoke 'database:set_permissions_post_update'
   end
 
   # desc 'Set (create or replace) database.yml in the shared path'
   task :set_database_file do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       debug '#' * 50
       debug 'Create and configure database.yml file'
 
-      default_host = '127.0.0.1'
-      default_database = rails_default_db_name
-      default_username = rails_default_db_name
-      default_password = ''
 
       set :db_orig_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)
-      set :database_host, ask('Database host:', default_host)
-      set :database_name, ask('Database Name:', default_database)
-      set :database_username, ask('Database Username:', default_username)
-      set :database_password, ask('Database Password:', default_password)
-
       upload! StringIO.new(File.read(fetch(:db_orig_file_path).to_s)), fetch(:database_file_path).to_s
 
       execute "sed -i 's/<<database_name>>/#{fetch(:database_name)}/g' #{fetch(:database_file_path)}"

@@ -1,30 +1,26 @@
 namespace :secrets do
   desc 'Create secrets.yml in shared path'
   task :configure do
-    on roles(:app) do
-      set :secrets_file_path, "#{fetch(:shared_path)}/config/secrets.yml"
+    set :secrets_file_path, "#{fetch(:shared_path)}/config/secrets.yml"
 
-      invoke 'secrets:set_permissions_pre_update'
-      invoke 'secrets:set_secrets_file'
-      invoke 'secrets:replace_token'
-      invoke 'secrets:set_permissions_post_update'
-    end
+    invoke 'secrets:set_permissions_pre_update'
+    invoke 'secrets:set_secrets_file'
+    invoke 'secrets:replace_token'
+    invoke 'secrets:set_permissions_post_update'
   end
 
   desc 'Update Application secret in file secrets.yml'
   task :update_app_secret do
-    on roles(:app) do
-      set :secrets_file_path, "#{fetch(:shared_path)}/config/secrets.yml"
+    set :secrets_file_path, "#{fetch(:shared_path)}/config/secrets.yml"
 
-      invoke 'secrets:set_permissions_pre_update'
-      invoke 'secrets:replace_token'
-      invoke 'secrets:set_permissions_post_update'
-    end
+    invoke 'secrets:set_permissions_pre_update'
+    invoke 'secrets:replace_token'
+    invoke 'secrets:set_permissions_post_update'
   end
 
   # desc 'Set (create or replace) secrets.yml in the shared path'
   task :set_secrets_file do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       debug '#' * 50
       debug 'Create and configure secrets.yml file'
       secrets_file_path = fetch(:secrets_file_path).to_s
@@ -46,7 +42,7 @@ namespace :secrets do
 
   # desc 'Replace the secure secret key in your secrets.yml'
   task :replace_token do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       debug '#' * 50
 
       pattern = 'secret_key_base:.*'

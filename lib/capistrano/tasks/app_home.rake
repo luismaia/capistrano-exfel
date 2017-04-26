@@ -8,7 +8,7 @@ namespace :app_home do
 
   desc 'Create application deploy folders on server and give it the correct permissions'
   task :create_deploy_folder do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
@@ -28,7 +28,7 @@ namespace :app_home do
 
   desc 'Create shared folder on server DEPLOY folder and give it the correct permissions'
   task :create_shared_folder do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
@@ -53,7 +53,7 @@ namespace :app_home do
 
   desc 'create revisions.log file on server DEPLOY folder and give it the correct permissions'
   task :create_revisions_file do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       debug '#' * 50
 
       set :revisions_log_file_path, "#{fetch(:deploy_to)}/revisions.log"
@@ -70,7 +70,7 @@ namespace :app_home do
 
   desc 'Correct shared folder permissions'
   task :correct_shared_permissions do
-    on roles(:app), in: :sequence, wait: 5 do
+    on roles(:app), in: :sequence do
       within release_path do
         sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
@@ -133,17 +133,33 @@ namespace :app_home do
   end
 
   task :reload_server_cache do
-    on roles(:app), in: :sequence, wait: 5 do
+    on roles(:app) do |host|
       debug '#' * 100
-      debug "wget -v -p --spider #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
-      execute :wget, "-v -p --spider #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
+      debug "wget -v -p --no-check-certificate --spider https://#{host}.desy.de/#{fetch(:app_name_uri)}"
+      execute :wget, "-v -p --no-check-certificate --spider https://#{host}.desy.de/#{fetch(:app_name_uri)}"
       debug 'Application visited successfully...'
       debug '#' * 100
     end
   end
 
+  task :deploy_first_time_start_msg do
+    on roles(:msg) do
+      info '#' * 100
+      info '#' * 10 + ' => Start Application first time deployment...'
+      info '#' * 100
+    end
+  end
+
+  task :deploy_start_msg do
+    on roles(:msg) do
+      info '#' * 100
+      info '#' * 10 + ' => Start Application re-deployment...'
+      info '#' * 100
+    end
+  end
+
   task :deploy_success_msg do
-    on roles(:app), in: :sequence, wait: 5 do
+    on roles(:msg) do
       info '#' * 100
       info '#' * 10 + ' => Application Successfully deployed...'
       info '#' * 100
@@ -157,7 +173,7 @@ namespace :app_home do
   # desc 'Restart application'
   ###
   task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
+    on roles(:app) do
       info '#' * 10 + ' Touching restart.txt...'
       execute :touch, release_path.join('tmp/restart.txt')
     end

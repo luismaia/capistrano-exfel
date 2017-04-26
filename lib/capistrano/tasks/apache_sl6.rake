@@ -1,16 +1,13 @@
 namespace :apache do
   desc 'Configure Apache configuration files'
   task :configure do
+    sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+    invoke 'apache:create_apache_shared_folder'
+    invoke 'apache:configure_app_conf_file'
+    invoke 'apache:configure_app_ssl_conf_file'
+
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
-
-      set :shared_path, "#{fetch(:deploy_to)}/shared"
-      set :shared_apache_path, "#{fetch(:shared_path)}/apache"
-
-      invoke 'apache:create_apache_shared_folder'
-      invoke 'apache:configure_app_conf_file'
-      invoke 'apache:configure_app_ssl_conf_file'
-
       if remote_file_exists?('/etc/httpd/conf.d/ssl.conf')
         execute "#{sudo_cmd} mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bck"
       end
@@ -19,7 +16,7 @@ namespace :apache do
 
   # desc 'Configure (HTTP) Apache Application configuration files'
   task :configure_app_conf_file do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
@@ -52,7 +49,7 @@ namespace :apache do
 
   # desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
-    on roles(:app) do
+    on roles(:app), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
