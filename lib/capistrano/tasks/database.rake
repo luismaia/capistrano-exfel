@@ -39,7 +39,6 @@ namespace :database do
       debug '#' * 50
       debug 'Create and configure database.yml file'
 
-
       set :db_orig_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)
       upload! StringIO.new(File.read(fetch(:db_orig_file_path).to_s)), fetch(:database_file_path).to_s
 

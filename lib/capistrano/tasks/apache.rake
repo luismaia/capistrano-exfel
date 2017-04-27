@@ -68,7 +68,6 @@ namespace :apache do
   desc 'Configure Apache to start at bootup'
   task :chkconfig_on do
     on roles(:web) do
-
       info 'In task apache:chkconfig_on'
 
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"

@@ -5,7 +5,6 @@ namespace :application do
   desc 'Configures Apache and deploys the Application for the first time in the configured server(s) ' \
        'with the right permissions'
   task :deploy_first_time do
-
     invoke 'app_home:deploy_first_time_start_msg'
     invoke 'app_home:create_all'
     invoke 'database:configure_mysql'
@@ -21,9 +20,9 @@ namespace :application do
   desc 'Re-deploys existent Application in the configured server(s)'
   task :deploy do
     invoke 'app_home:deploy_start_msg'
-      # This is advisable to kill users cookies after the upgrade.
-      # The consequence is that users will be logged out automatically from the Application after the upgrade.
-      # This is important to avoid errors with old validity_token in forms
+    # This is advisable to kill users cookies after the upgrade.
+    # The consequence is that users will be logged out automatically from the Application after the upgrade.
+    # This is important to avoid errors with old validity_token in forms
     invoke 'secrets:update_app_secret'
     invoke :deploy
     invoke 'app_home:correct_shared_permissions'
@@ -99,7 +98,7 @@ namespace :load do
       ask("the application URI (i.e. #{fetch(:default_app_uri)})", fetch(:default_app_uri))
     end
 
-    set :secrets_key_base, -> { ask('application secrets key base', SecureRandom.hex(64))  }
+    set :secrets_key_base, -> { ask('application secrets key base', SecureRandom.hex(64)) }
 
     set :app_full_url, -> { "#{fetch(:app_domain)}#{fetch(:app_name_uri)}" }
 
