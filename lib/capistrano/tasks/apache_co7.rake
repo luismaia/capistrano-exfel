@@ -42,7 +42,7 @@ namespace :apache do
 
       debug '#' * 50
       debug 'Deactivate unnecessary Apache modules'
-      %w(00-dav.conf 00-lua.conf 00-proxy.conf 01-cgi.conf).each do |file|
+      %w[00-dav.conf 00-lua.conf 00-proxy.conf 01-cgi.conf].each do |file|
         if remote_file_exists?("/etc/httpd/conf.modules.d/#{file}")
           execute "#{sudo_cmd} mv /etc/httpd/conf.modules.d/#{file} /etc/httpd/conf.modules.d/#{file}_bck"
         end

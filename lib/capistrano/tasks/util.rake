@@ -1,5 +1,5 @@
 def remote_file_exists?(full_path)
-  'true' == get_command_output("if [ -e #{full_path} ]; then echo 'true'; fi")
+  get_command_output("if [ -e #{full_path} ]; then echo 'true'; fi") == 'true'
 end
 
 def get_num_occurrences_in_file(file_path, string)
