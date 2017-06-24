@@ -102,7 +102,7 @@ namespace :apache do
 
       else
         set :num_replacements, 0
-        %w(On Off EMail).each do |option|
+        %w[On Off EMail].each do |option|
           set :server_signature_option,
               get_num_occurrences_in_file(fetch(:httpd_conf_file), "ServerSignature #{option}")
 
@@ -125,7 +125,7 @@ namespace :apache do
         info 'ServerTokens Prod is already set'
       else
         set :num_replacements, 0
-        %w(Major Minor Minimal Min ProductOnly Prod OS Full).each do |option|
+        %w[Major Minor Minimal Min ProductOnly Prod OS Full].each do |option|
           set :server_token_option, get_num_occurrences_in_file(fetch(:httpd_conf_file), "ServerTokens #{option}")
 
           next unless fetch(:server_token_option) == 1

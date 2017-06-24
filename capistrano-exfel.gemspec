@@ -7,7 +7,7 @@ require 'capistrano/exfel/version'
 Gem::Specification.new do |spec|
   spec.name          = 'capistrano-exfel'
   spec.version       = Capistrano::Exfel::VERSION
-  spec.authors       = ['Luis Maia','Maurizio Manetti']
+  spec.authors       = ['Luis Maia', 'Maurizio Manetti']
   spec.email         = %w[luisgoncalo.maia@gmail.com maurizio.manetti@xfel.eu]
   spec.summary       = 'Deploy Ruby on Rails 4 Applications in EXFEL Virtual Machines'
   spec.description   = 'Deployment of Ruby on Rails Applications in EXFEL Virtual Machines ' \

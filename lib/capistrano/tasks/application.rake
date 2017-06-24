@@ -135,10 +135,10 @@ namespace :load do
     set :pty, -> { true }
 
     # Default value for :linked_files is []
-    set :linked_files, -> { %w(config/database.yml config/secrets.yml) }
+    set :linked_files, -> { %w[config/database.yml config/secrets.yml] }
 
     # Default value for linked_dirs is []
-    set :linked_dirs, -> { %w(log tmp/pids tmp/sockets vendor/bundle public/system) }
+    set :linked_dirs, -> { %w[log tmp/pids tmp/sockets vendor/bundle public/system] }
 
     # Default value for keep_releases is 5
     set :keep_releases, -> { 5 }
@@ -163,7 +163,7 @@ namespace :load do
     # RVM related information
     set :rvm_type, -> { :system }
     set :rvm_ruby_version, -> { ask('the Ruby version (i.e. 2.4.0)', '') }
-    set :rvm_roles, %i(app web)
+    set :rvm_roles, %i[app web]
     # set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
 
     # Apache related information
