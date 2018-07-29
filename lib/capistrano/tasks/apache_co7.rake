@@ -24,7 +24,7 @@ namespace :apache do
       debug 'Configure (HTTP) Apache Passenger module'
 
       set :shared_passenger_file, "#{fetch(:shared_apache_path)}/00-passenger.conf"
-      passenger_file = File.expand_path('../../recipes/co7/00-passenger.conf', __FILE__)
+      passenger_file = File.expand_path('../recipes/co7/00-passenger.conf', __dir__)
 
       upload! StringIO.new(File.read(passenger_file)), fetch(:shared_passenger_file).to_s
 
@@ -60,7 +60,7 @@ namespace :apache do
       debug 'Configure (HTTP) Apache Application configuration files'
 
       set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
-      http_file = File.expand_path('../../recipes/co7/apache_http.conf', __FILE__)
+      http_file = File.expand_path('../recipes/co7/apache_http.conf', __dir__)
       upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
@@ -87,7 +87,7 @@ namespace :apache do
       debug 'Configure (HTTPS) Apache Application configuration files'
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
-      http_ssl_file = File.expand_path('../../recipes/co7/apache_ssl.conf', __FILE__)
+      http_ssl_file = File.expand_path('../recipes/co7/apache_ssl.conf', __dir__)
       upload! StringIO.new(File.read(http_ssl_file)), fetch(:shared_apache_conf_ssl_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
@@ -122,7 +122,7 @@ namespace :apache do
 
       # Create a temporary copy of the Apache configuration file
       set :tmp_httpd_file, '/tmp/httpd.conf'
-      httpd_safe_file = File.expand_path('../../recipes/co7/httpd.conf', __FILE__)
+      httpd_safe_file = File.expand_path('../recipes/co7/httpd.conf', __dir__)
 
       upload! StringIO.new(File.read(httpd_safe_file)), fetch(:tmp_httpd_file).to_s
 

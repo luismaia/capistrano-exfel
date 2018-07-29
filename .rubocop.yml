@@ -29,3 +29,7 @@ Metrics/BlockLength:
 Style/IndentHeredoc:
   Exclude:
     - 'lib/capistrano/tasks/apache_sl6.rake'
+
+# Use meaningful heredoc delimiters.
+Naming/HeredocDelimiterNaming:
+  Enabled: false

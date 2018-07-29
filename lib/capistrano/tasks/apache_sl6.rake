@@ -23,7 +23,7 @@ namespace :apache do
       debug 'Configure (HTTP) Apache Application configuration files'
 
       set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
-      http_file = File.expand_path('../../recipes/apache_http.conf', __FILE__)
+      http_file = File.expand_path('../recipes/apache_http.conf', __dir__)
       upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
@@ -56,7 +56,7 @@ namespace :apache do
       debug 'Configure (HTTPS) Apache Application configuration files'
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
-      http_ssl_file = File.expand_path('../../recipes/apache_ssl.conf', __FILE__)
+      http_ssl_file = File.expand_path('../recipes/apache_ssl.conf', __dir__)
       upload! StringIO.new(File.read(http_ssl_file)), fetch(:shared_apache_conf_ssl_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"

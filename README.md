@@ -9,10 +9,10 @@ Installation of Phusion Passenger and RVM are also required to this gem.
 Add these lines to your application's Gemfile:
 
     # Use Capistrano for deployment
-    gem 'capistrano', '~> 3.4.0'
-    gem 'capistrano-rails', '~> 1.1.2'
-    gem 'capistrano-rvm', '~> 0.1.2'
-    gem 'capistrano-exfel', '~> 0.0.20'
+    gem 'capistrano', '3.11.0', require: false
+    gem 'capistrano-exfel', '0.1.0', require: false
+    gem 'capistrano-rails', '1.4.0', require: false
+    gem 'capistrano-rvm', '0.1.2', require: false
 
 
 And then execute:
