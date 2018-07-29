@@ -1,6 +1,4 @@
-# coding: utf-8
-
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'capistrano/exfel/version'
 
@@ -12,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Deploy Ruby on Rails 4 Applications in EXFEL Virtual Machines'
   spec.description   = 'Deployment of Ruby on Rails Applications in EXFEL Virtual Machines ' \
                         '(Scientific Linux / CentOS 7 + Apache + RVM + Phusion Passenger) using Capistrano3 and LDAP'
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/luismaia/capistrano-exfel'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
