@@ -11,8 +11,7 @@ require 'capistrano/rvm'
 require 'capistrano/rails'
 
 load File.expand_path('../tasks/apache_common.rake', __dir__)
-load File.expand_path('../tasks/apache_rpm.rake', __dir__)
-load File.expand_path('../tasks/apache_sl6.rake', __dir__)
+load File.expand_path('../tasks/apache_ub14.rake', __dir__)
 load File.expand_path('../tasks/app_home.rake', __dir__)
 load File.expand_path('../tasks/assets.rake', __dir__)
 load File.expand_path('../tasks/application.rake', __dir__)
