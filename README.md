@@ -1,7 +1,7 @@
 # Capistrano::Exfel
 
 Deploys Ruby on Rails Applications in EXFEL VMs using Capistrano3 throw username/password authentication.
-The standard EXFEL VMs consist of Scientific Linux 6 or CentOS 7 with Apache.
+The standard EXFEL VMs consist of Scientific Linux 6, CentOS 7 or Ubuntu 14 with Apache.
 Installation of Phusion Passenger and RVM are also required to this gem.
 
 ## Installation
@@ -10,7 +10,7 @@ Add these lines to your application's Gemfile:
 
     # Use Capistrano for deployment
     gem 'capistrano', '3.11.0', require: false
-    gem 'capistrano-exfel', '0.1.0', require: false
+    gem 'capistrano-exfel', '0.2.0', require: false
     gem 'capistrano-rails', '1.4.0', require: false
     gem 'capistrano-rvm', '0.1.2', require: false
 
@@ -33,10 +33,15 @@ Add this line to your `Capfile` for Scientific Linux 6 machines:
     # Load Capistrano Exfel Scientific Linux 6 tasks
     require 'capistrano/exfel/sl6'
 
-Add this line to your `Capfile` for CentOS 7 machines::
+Add this line to your `Capfile` for CentOS 7 machines:
 
     # Load Capistrano Exfel CentOS tasks
     require 'capistrano/exfel/co7'
+
+Add this line to your `Capfile` for Ubuntu 14 machines:
+
+    # Load Ubuntu 14 tasks
+    require 'capistrano/exfel/ub14'
 
 
 This gem will reuse `capistrano-rails` and `capistrano-rvm` tasks to build the following tasks:
@@ -79,7 +84,7 @@ The most important configurable options and their defaults:options can be added 
 
 ```ruby
 # Set username and password
-set :username, ask('username', 'maial') # If not specified will ask for it proposing the current user
+set :username, ask('username', proc { `whoami`.chomp }.call) # If not specified will ask for it proposing the current user
 set :password, ask('password', nil, echo: false) # If not specified will ask for it
 
 # Application Name
@@ -112,7 +117,7 @@ set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo
 
 # RVM related information
 # set :rvm_type, :system
-set :rvm_ruby_version, '2.1.5' # If not specified will ask for it
+set :rvm_ruby_version, '2.4.4' # If not specified will ask for it
 # set :rvm_roles, [:app, :web]
 ```
 
