@@ -1,12 +1,6 @@
+# apache tasks common to all distros
+
 namespace :apache do
-  desc 'Configure Apache (httpd) and restart it'
-  task :configure_and_start do
-    invoke 'apache:configure'
-    invoke 'apache:chkconfig_on'
-    # invoke 'apache:restart'
-    invoke 'apache:secure_apache' # This should go to Puppet
-    invoke 'apache:create_symbolic_link'
-  end
 
   desc 'Check that the user has write permissions in the Deploy and in Apache DocumentRoot folders'
   task :check_write_permissions do
@@ -47,6 +41,7 @@ namespace :apache do
     end
   end
 
+
   # desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
     on roles(:app) do
@@ -61,44 +56,6 @@ namespace :apache do
       debug "chmod g+ws #{fetch(:shared_apache_path)}"
       execute "#{sudo_cmd} chmod g+ws #{fetch(:shared_apache_path)}"
 
-      debug '#' * 50
-    end
-  end
-
-  desc 'Configure Apache to start at bootup'
-  task :chkconfig_on do
-    on roles(:web) do
-      info 'In task apache:chkconfig_on'
-
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
-
-      debug '#' * 50
-
-      debug 'chkconfig httpd on'
-      execute "#{sudo_cmd} chkconfig httpd on"
-
-      info 'Configured Apache to start at bootup'
-      debug '#' * 50
-    end
-  end
-
-  desc 'Restart Apache (httpd) service'
-  task :restart do
-    on roles(:web) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
-
-      debug '#' * 50
-
-      debug 'service httpd stop'
-      execute "#{sudo_cmd} service httpd stop"
-
-      debug 'pkill -9 httpd || true'
-      execute "#{sudo_cmd} pkill -9 httpd || true"
-
-      debug 'service httpd start'
-      execute "#{sudo_cmd} service httpd start"
-
-      info 'Restarted Apache (httpd) service'
       debug '#' * 50
     end
   end
