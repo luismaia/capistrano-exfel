@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = Capistrano::Exfel::VERSION
   spec.authors       = ['Luis Maia', 'Maurizio Manetti']
   spec.email         = %w[luisgoncalo.maia@gmail.com maurizio.manetti@xfel.eu]
-  spec.summary       = 'Deploy Ruby on Rails 4 Applications in EXFEL Virtual Machines'
+  spec.summary       = 'Deploy Ruby on Rails 4 and 5 Applications in EXFEL Virtual Machines'
   spec.description   = 'Deployment of Ruby on Rails Applications in EXFEL Virtual Machines ' \
                         '(Scientific Linux / CentOS 7 / Ubuntu 14 + Apache + RVM + Phusion Passenger) using Capistrano3 and LDAP'
   spec.homepage      = 'https://github.com/luismaia/capistrano-exfel'
