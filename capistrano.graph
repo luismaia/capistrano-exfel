@@ -1,0 +1,66 @@
+digraph {
+
+	rankdir=LR; 
+	node [shape=box;fontname=Arial];
+
+	"application:deploy_first_time" -> "app_home:deploy_first_time_start_msg";
+	"application:deploy_first_time" -> "app_home:create_all";
+	"application:deploy_first_time" -> "database:configure_mysql";
+	"application:deploy_first_time" -> "secrets:configure";
+	"application:deploy_first_time" -> "apache:configure_and_start";
+	"application:deploy_first_time" -> "apache:check_write_permissions";
+	"application:deploy_first_time" -> deploy;
+	"application:deploy_first_time" -> "app_home:correct_shared_permissions";
+	"application:deploy_first_time" -> "application:restart";
+
+	"application:deploy" -> "app_home:deploy_start_msg";
+	"application:deploy" -> "secrets:update_app_secret";
+	"application:deploy" -> deploy;
+	"application:deploy" -> "app_home:correct_shared_permissions";
+	"application:deploy" -> "application:restart";
+
+	"application:restart" -> "apache:restart";
+	"application:restart" -> "app_home:reload_server_cache";
+	"application:restart" -> "app_home:deploy_success_msg";
+	
+	"application:reconfigure_apache" -> "apache_co7:configure";
+	"application:reconfigure_apache" -> "application:restart";
+
+	"app_home:create_all" -> "app_home:create_deploy_folder";
+	"app_home:create_all" -> "app_home:create_shared_folder"; 
+	"app_home:create_all" -> "app_home:create_revisions_file";
+
+	"apache:configure_and_start" -> "apache_co7:configure";
+	"apache:configure_and_start" -> "apache:chkconfig_on";
+	"apache:configure_and_start" -> "apache_co7:secure_apache";
+	"apache:configure_and_start" -> "apache:create_symbolic_link";
+
+	"apache:check_write_permissions" -> "apache:check_write_permissions_on_deploy";
+	"apache:check_write_permissions" -> "apache:check_write_permissions_on_document_root";
+
+	"apache_co7:configure" -> "apache:create_apache_shared_folder";
+	"apache_co7:configure" -> "apache_co7:configure_apache_modules";
+	"apache_co7:configure" -> "apache_co7:configure_app_conf_file";
+	"apache_co7:configure" -> "apache_co7:configure_app_ssl_conf_file";
+
+	deploy -> "deploy:compile_assets";
+	"deploy:compile_assets" -> "deploy:assets_precompile";
+	"deploy:compile_assets" -> "deploy:assets_backup_manifest";
+
+	"database:configure_mysql" -> "database:configure_database_file";
+	"database:configure_database_file" -> "database:set_permissions_pre_update";
+	"database:configure_database_file" -> "database:set_database_file";
+	"database:configure_database_file" -> "database:set_permissions_post_update";
+
+	"secrets:configure" -> "secrets:set_permissions_pre_update";
+	"secrets:configure" -> "secrets:set_secrets_file";
+	"secrets:configure" -> "secrets:replace_token";
+	"secrets:configure" -> "secrets:set_permissions_post_update";
+
+	"secrets:update_app_secret" -> "secrets:set_permissions_pre_update";
+	"secrets:update_app_secret" -> "secrets:replace_token";
+	"secrets:update_app_secret" -> "secrets:set_permissions_post_update"
+
+}
+
+
