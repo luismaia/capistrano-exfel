@@ -1,7 +1,6 @@
 # apache tasks specific to Ubuntu 14
 
 namespace :apache do
-
   desc 'Configure Apache (httpd) and restart it'
   task :configure_and_start do
     invoke 'apache:configure'
@@ -114,5 +113,4 @@ namespace :apache do
   #     debug '#' * 50
   #   end
   # end
-
 end

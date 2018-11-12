@@ -1,7 +1,6 @@
 # apache tasks common to all distros
 
 namespace :apache do
-
   desc 'Check that the user has write permissions in the Deploy and in Apache DocumentRoot folders'
   task :check_write_permissions do
     invoke 'apache:check_write_permissions_on_deploy'
@@ -40,7 +39,6 @@ namespace :apache do
       debug '#' * 50
     end
   end
-
 
   # desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
