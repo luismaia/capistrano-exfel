@@ -12,6 +12,7 @@ end
 
 def rails_default_app_name
   return fetch(:app_name).to_s if get_rails_env_abbr == 'prod'
+
   "#{get_rails_env_abbr}_#{fetch(:app_name)}"
 end
 

@@ -47,6 +47,4 @@ namespace :apache do
       debug '#' * 50
     end
   end
-
-
 end
