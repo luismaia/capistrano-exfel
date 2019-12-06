@@ -29,7 +29,7 @@ namespace :apache do
       debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
 
-      passenger_root = get_command_output('/usr/local/rvm/bin/rvm default do passenger-config --root')
+      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
       app_domain = fetch(:app_domain)
       server_name = app_domain.split('/')[2]
