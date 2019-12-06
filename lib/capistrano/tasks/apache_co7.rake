@@ -35,21 +35,21 @@ namespace :apache do
       set :shared_passenger_file, "/etc/httpd/conf.modules.d/00-passenger.conf"
       passenger_file = File.expand_path('../recipes/co7/00-passenger.conf', __dir__)
 
-      if remote_file_exists?(fetch(:shared_passenger_file).to_s)
-        execute "#{sudo_cmd} rm #{fetch(:shared_passenger_file)}"
-      end
+      # Create a temporary copy of the passenger module file
+      set :tmp_passenger_file, '/tmp/00-passenger.conf'
 
-      upload! StringIO.new(File.read(passenger_file)), fetch(:shared_passenger_file).to_s
-
-      debug "chmod g+w #{fetch(:shared_passenger_file)}"
-      execute "chmod g+w #{fetch(:shared_passenger_file)}"
+      upload! StringIO.new(File.read(passenger_file)), fetch(:tmp_passenger_file).to_s
 
       passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
 
-      debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
-      execute "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
-      execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_passenger_file)}"
+      debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:tmp_passenger_file)}"
+      execute "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:tmp_passenger_file)}"
+      execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:tmp_passenger_file)}"
+
+      # Replace the passenger module file
+      execute "#{sudo_cmd} mv -f #{fetch(:tmp_passenger_file)} #{fetch(:shared_passenger_file)}"
+      execute "#{sudo_cmd} chown root.root #{fetch(:shared_passenger_file)}"
 
       debug '#' * 50
       debug 'Deactivate unnecessary Apache modules'
@@ -59,7 +59,7 @@ namespace :apache do
           unless remote_file_exists?("/etc/httpd/conf.modules.d/#{file}_bck")
             execute "#{sudo_cmd} cp /etc/httpd/conf.modules.d/#{file} /etc/httpd/conf.modules.d/#{file}_bck"
           end
-          execute "#{sudo_cmd} echo '' > /etc/httpd/conf.modules.d/#{file}"
+          execute "#{sudo_cmd} truncate -s 0 /etc/httpd/conf.modules.d/#{file}"
         end
       end
       debug '#' * 50
@@ -108,8 +108,12 @@ namespace :apache do
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
 
+      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
+      ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
+
       execute "sed -i 's/<<APPLICATION_NAME>>/#{fetch(:app_name_uri)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
+      execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_apache_conf_ssl_file)}"
 
       execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/httpd/sites.d/"
 
