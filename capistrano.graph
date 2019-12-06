@@ -1,66 +1,108 @@
 digraph {
 
-	rankdir=LR; 
-	node [shape=box;fontname=Arial];
+    rankdir=LR;
+	edge [arrowhead=open;fontname=Arial;labeldistance=0];
+	node [shape=record;fontname=Arial];
+	// splines=ortho;
 
-	"application:deploy_first_time" -> "app_home:deploy_first_time_start_msg";
-	"application:deploy_first_time" -> "app_home:create_all";
-	"application:deploy_first_time" -> "database:configure_mysql";
-	"application:deploy_first_time" -> "secrets:configure";
-	"application:deploy_first_time" -> "apache:configure_and_start";
-	"application:deploy_first_time" -> "apache:check_write_permissions";
-	"application:deploy_first_time" -> deploy;
-	"application:deploy_first_time" -> "app_home:correct_shared_permissions";
-	"application:deploy_first_time" -> "application:restart";
+    subgraph cluster_application {
+        labeljust="l";
+        label="application.rake";
+        fontname="Arial";
+        "application:deploy_first_time" -> "deploy"[label="7",color=orange];
+        "application:deploy_first_time" -> "application:restart"[label="9",color=brown];
+        "application:deploy" -> "deploy"[label="3",color=purple];
+        "application:deploy" -> "application:restart"[label="5",color=yellow];
+        "application:reconfigure_apache" -> "application:restart"[label="2",color=blue];
+        "application:show_variables";
+        "load:defaults";
+    }
 
-	"application:deploy" -> "app_home:deploy_start_msg";
-	"application:deploy" -> "secrets:update_app_secret";
-	"application:deploy" -> deploy;
-	"application:deploy" -> "app_home:correct_shared_permissions";
-	"application:deploy" -> "application:restart";
+    subgraph cluster_apache_rpm {
+        label="apache_rpm.rake";
+        labeljust="l";
+        fontname="Arial";
+        "apache:configure_and_start" -> "apache:chkconfig_on"[label="2",color=blue];
+        "application:deploy_first_time" -> "apache:configure_and_start"[label="5",color=yellow];
+        "application:restart" -> "apache:restart"[label="1",color=black];
+    }
 
-	"application:restart" -> "apache:restart";
-	"application:restart" -> "app_home:reload_server_cache";
-	"application:restart" -> "app_home:deploy_success_msg";
-	
-	"application:reconfigure_apache" -> "apache_co7:configure";
-	"application:reconfigure_apache" -> "application:restart";
+    subgraph cluster_apache_co7 {
+        label="apache_co7.rake";
+        labeljust="l";
+        fontname="Arial";
+        "application:reconfigure_apache" -> "apache:configure"[label="1",color=black];
+        "apache:configure_and_start" -> "apache:configure"[label="1",color=black];
+        "apache:configure" -> "apache:create_apache_sites_folder"[label="2",color=blue];
+        "apache:configure" -> "apache:configure_apache_modules"[label="3",color=purple];
+        "apache:configure" -> "apache:configure_app_ssl_conf_file"[label="4",color=red];
+        "apache:configure_and_start" -> "apache:secure_apache"[label="3",color=purple];
+    }
 
-	"app_home:create_all" -> "app_home:create_deploy_folder";
-	"app_home:create_all" -> "app_home:create_shared_folder"; 
-	"app_home:create_all" -> "app_home:create_revisions_file";
+    subgraph cluster_apache_common {
+        label="apache_common.rake";
+        labeljust="l";
+        fontname="Arial";
+        "apache:configure" -> "apache:create_apache_shared_folder"[label="1",color=black];
+        "apache:configure_and_start" -> "apache:create_symbolic_link"[label="4",color=red];
+        "application:deploy_first_time" -> "apache:check_write_permissions"[label="6",color=green];
+        "apache:check_write_permissions" -> "apache:check_write_permissions_on_deploy"[label="1",color=black];
+        "apache:check_write_permissions" -> "apache:check_write_permissions_on_document_root"[label="2",color=blue];
+    }
 
-	"apache:configure_and_start" -> "apache_co7:configure";
-	"apache:configure_and_start" -> "apache:chkconfig_on";
-	"apache:configure_and_start" -> "apache_co7:secure_apache";
-	"apache:configure_and_start" -> "apache:create_symbolic_link";
+    subgraph cluster_secrets {
+        label="secrets.rake";
+        labeljust="l";
+        fontname="Arial";
+        "application:deploy" -> "secrets:update_app_secret"[label="2",color=blue];
+        "secrets:update_app_secret" -> "secrets:set_permissions_pre_update"[label="1",color=black];
+        "secrets:update_app_secret" -> "secrets:replace_token"[label="2",color=blue];
+        "secrets:update_app_secret" -> "secrets:set_permissions_post_update"[label="3",color=purple];
+        "application:deploy_first_time" -> "secrets:configure"[label="4",color=red];
+        "secrets:configure" -> "secrets:set_permissions_pre_update"[label="1",color=black];
+        "secrets:configure" -> "secrets:set_secrets_file"[label="2",color=blue];
+        "secrets:configure" -> "secrets:replace_token"[label="3",color=purple];
+        "secrets:configure" -> "secrets:set_permissions_post_update"[label="4",color=red];
+    }
 
-	"apache:check_write_permissions" -> "apache:check_write_permissions_on_deploy";
-	"apache:check_write_permissions" -> "apache:check_write_permissions_on_document_root";
+    subgraph cluster_app_home {
+       label="app_home.rake";
+       labeljust="l";
+       fontname="Arial";
+       "application:deploy" -> "app_home:deploy_start_msg"[label="1",color=black];
+       "application:deploy_first_time" -> "app_home:deploy_first_time_start_msg"[label="1",color=black];
+       "application:deploy_first_time" -> "app_home:create_all"[label="2",color=blue];
+       "application:deploy_first_time" -> "app_home:correct_shared_permissions"[label="8",color=pink];
+       "app_home:create_all" -> "app_home:create_deploy_folder"[label="1",color=black];
+       "app_home:create_all" -> "app_home:create_shared_folder"[label="2",color=blue];
+       "app_home:create_all" -> "app_home:create_revisions_file"[label="3",color=purple];
+       "application:deploy" -> "app_home:correct_shared_permissions"[label="4",color=red];
+       "application:restart" -> "app_home:reload_server_cache"[label="2",color=blue];
+       "application:restart" -> "app_home:deploy_success_msg"[label="3",color=purple];
+       "app_home:correct_public_folder_permissions";
+       "app_home:clear_tmp_files";
+       "app_home:restart";
+    }
 
-	"apache_co7:configure" -> "apache:create_apache_shared_folder";
-	"apache_co7:configure" -> "apache_co7:configure_apache_modules";
-	"apache_co7:configure" -> "apache_co7:configure_app_conf_file";
-	"apache_co7:configure" -> "apache_co7:configure_app_ssl_conf_file";
+    subgraph cluster_database {
+       label="database.rake";
+       labeljust="l";
+       fontname="Arial";
+	   "application:deploy_first_time" -> "database:configure_mysql"[label="3",color=purple];
+	   "database:configure_mysql" -> "database:configure_database_file";
+	   "database:configure_database_file" -> "database:set_permissions_pre_update"[label="1",color=black];
+	   "database:configure_database_file" -> "database:set_database_file"[label="2",color=blue];
+	   "database:configure_database_file" -> "database:set_permissions_post_update"[label="3",color=purple];
+	   "database:seed";
+	}
 
-	deploy -> "deploy:compile_assets";
-	"deploy:compile_assets" -> "deploy:assets_precompile";
-	"deploy:compile_assets" -> "deploy:assets_backup_manifest";
-
-	"database:configure_mysql" -> "database:configure_database_file";
-	"database:configure_database_file" -> "database:set_permissions_pre_update";
-	"database:configure_database_file" -> "database:set_database_file";
-	"database:configure_database_file" -> "database:set_permissions_post_update";
-
-	"secrets:configure" -> "secrets:set_permissions_pre_update";
-	"secrets:configure" -> "secrets:set_secrets_file";
-	"secrets:configure" -> "secrets:replace_token";
-	"secrets:configure" -> "secrets:set_permissions_post_update";
-
-	"secrets:update_app_secret" -> "secrets:set_permissions_pre_update";
-	"secrets:update_app_secret" -> "secrets:replace_token";
-	"secrets:update_app_secret" -> "secrets:set_permissions_post_update"
+    subgraph cluster_assets {
+       label="assets.rake";
+       labeljust="l";
+       fontname="Arial";
+       deploy -> "deploy:compile_assets";
+       "deploy:compile_assets" -> "deploy:assets_precompile"[label="1",color=black];
+       "deploy:compile_assets" -> "deploy:assets_backup_manifest"[label="2",color=blue];
+    }
 
 }
-
-

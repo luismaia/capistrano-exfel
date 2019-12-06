@@ -40,7 +40,7 @@ namespace :apache do
     end
   end
 
-  # desc 'Create Apache configuration files shared folder'
+  desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
     on roles(:app) do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"

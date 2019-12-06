@@ -1,17 +1,26 @@
 namespace :apache do
   desc 'Configure Apache configuration files'
   task :configure do
-    sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
     invoke 'apache:create_apache_shared_folder'
+    invoke 'apache:create_apache_sites_folder'
     invoke 'apache:configure_apache_modules'
-    invoke 'apache:configure_app_conf_file'
     invoke 'apache:configure_app_ssl_conf_file'
 
+  end
+
+  desc 'Create Apache multi-site configuration folder'
+  task :create_apache_sites_folder do
     on roles(:app) do
-      if remote_file_exists?('/etc/httpd/conf.d/ssl.conf')
-        execute "#{sudo_cmd} mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf_bck"
-      end
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+      debug '#' * 50
+      debug 'Create Apache multi-site configuration folder'
+
+      debug "mkdir -p /etc/httpd/sites.d"
+      execute "#{sudo_cmd} mkdir -p /etc/httpd/sites.d"
+
+      debug '#' * 50
     end
   end
 
@@ -23,28 +32,34 @@ namespace :apache do
       debug '#' * 50
       debug 'Configure (HTTP) Apache Passenger module'
 
-      set :shared_passenger_file, "#{fetch(:shared_apache_path)}/00-passenger.conf"
+      set :shared_passenger_file, "/etc/httpd/conf.modules.d/00-passenger.conf"
       passenger_file = File.expand_path('../recipes/co7/00-passenger.conf', __dir__)
+
+      if remote_file_exists?(fetch(:shared_passenger_file).to_s)
+        execute "#{sudo_cmd} rm #{fetch(:shared_passenger_file)}"
+      end
 
       upload! StringIO.new(File.read(passenger_file)), fetch(:shared_passenger_file).to_s
 
       debug "chmod g+w #{fetch(:shared_passenger_file)}"
       execute "chmod g+w #{fetch(:shared_passenger_file)}"
 
-      passenger_root = get_command_output('/usr/local/rvm/bin/rvm default do passenger-config --root')
+      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
 
       debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
       execute "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:shared_passenger_file)}"
       execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_passenger_file)}"
 
-      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_passenger_file)} /etc/httpd/conf.modules.d/"
-
       debug '#' * 50
       debug 'Deactivate unnecessary Apache modules'
       %w[00-dav.conf 00-lua.conf 00-proxy.conf 01-cgi.conf].each do |file|
         if remote_file_exists?("/etc/httpd/conf.modules.d/#{file}")
-          execute "#{sudo_cmd} mv /etc/httpd/conf.modules.d/#{file} /etc/httpd/conf.modules.d/#{file}_bck"
+          # only perform backup of Apache modules files unless already done
+          unless remote_file_exists?("/etc/httpd/conf.modules.d/#{file}_bck")
+            execute "#{sudo_cmd} cp /etc/httpd/conf.modules.d/#{file} /etc/httpd/conf.modules.d/#{file}_bck"
+          end
+          execute "#{sudo_cmd} echo '' > /etc/httpd/conf.modules.d/#{file}"
         end
       end
       debug '#' * 50
@@ -52,33 +67,33 @@ namespace :apache do
   end
 
   # desc 'Configure (HTTP) Apache Application configuration files'
-  task :configure_app_conf_file do
-    on roles(:app), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+  # task :configure_app_conf_file do
+  #   on roles(:app), in: :sequence do
+  #     sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+  #
+  #     debug '#' * 50
+  #     debug 'Configure (HTTP) Apache Application configuration files'
+  #
+  #     set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
+  #     http_file = File.expand_path('../recipes/co7/apache_http.conf', __dir__)
+  #     upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
+  #
+  #     debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
+  #     execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
+  #
+  #     app_domain = fetch(:app_domain)
+  #     server_name = app_domain.split('/')[2]
+  #
+  #     execute "sed -i 's|<<APP_DOMAIN>>|#{app_domain}|g' #{fetch(:shared_apache_conf_file)}"
+  #     execute "sed -i 's|<<SERVER_NAME>>|#{server_name}|g' #{fetch(:shared_apache_conf_file)}"
+  #
+  #     execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_file)} /etc/httpd/conf.d/"
+  #
+  #     debug '#' * 50
+  #   end
+  # end
 
-      debug '#' * 50
-      debug 'Configure (HTTP) Apache Application configuration files'
-
-      set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
-      http_file = File.expand_path('../recipes/co7/apache_http.conf', __dir__)
-      upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
-
-      debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
-      execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
-
-      app_domain = fetch(:app_domain)
-      server_name = app_domain.split('/')[2]
-
-      execute "sed -i 's|<<APP_DOMAIN>>|#{app_domain}|g' #{fetch(:shared_apache_conf_file)}"
-      execute "sed -i 's|<<SERVER_NAME>>|#{server_name}|g' #{fetch(:shared_apache_conf_file)}"
-
-      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_file)} /etc/httpd/conf.d/"
-
-      debug '#' * 50
-    end
-  end
-
-  # desc 'Configure (HTTPS) Apache Application configuration files'
+  desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
     on roles(:app), in: :sequence do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
@@ -87,7 +102,7 @@ namespace :apache do
       debug 'Configure (HTTPS) Apache Application configuration files'
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
-      http_ssl_file = File.expand_path('../recipes/co7/apache_ssl.conf', __dir__)
+      http_ssl_file = File.expand_path('../recipes/co7/app_ssl.conf', __dir__)
       upload! StringIO.new(File.read(http_ssl_file)), fetch(:shared_apache_conf_ssl_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
@@ -96,19 +111,19 @@ namespace :apache do
       execute "sed -i 's/<<APPLICATION_NAME>>/#{fetch(:app_name_uri)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
 
-      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/httpd/conf.d/"
+      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/httpd/sites.d/"
 
       debug '#' * 50
     end
   end
 
-  desc 'Update httpd.conf to secure apache server'
+  desc 'Update httpd.conf and ssl.conf'
   task :secure_apache do
     on roles(:web) do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
       debug '#' * 50
-      debug 'Update httpd.conf to secure apache server'
+      debug 'Update httpd.conf and ssl.conf'
 
       set :httpd_conf_file, '/etc/httpd/conf/httpd.conf'
 
@@ -128,6 +143,25 @@ namespace :apache do
 
       # Replace the original Apache configuration file
       execute "#{sudo_cmd} mv -f #{fetch(:tmp_httpd_file)} #{fetch(:httpd_conf_file)}"
+
+      set :ssl_conf_file, '/etc/httpd/conf.d/ssl.conf'
+
+      # Replace the original Apache ssl configuration file
+      if remote_file_exists?('/etc/httpd/conf.d/ssl.conf_bck')
+        info 'Apache original ssl configuration file already backed up at: /etc/httpd/conf.d/ssl.conf_bck'
+      else
+        execute "#{sudo_cmd} cp -f #{fetch(:ssl_conf_file)} /etc/httpd/conf.d/ssl.conf_bck"
+        info 'Apache original ssl configuration file backed up at: /etc/httpd/conf.d/ssl.conf_bck'
+      end
+
+      # Create a temporary copy of the Apache ssl configuration file
+      set :tmp_ssl_file, '/tmp/ssl.conf'
+      ssl_safe_file = File.expand_path('../recipes/co7/ssl.conf', __dir__)
+
+      upload! StringIO.new(File.read(ssl_safe_file)), fetch(:tmp_ssl_file).to_s
+
+      # Replace the original Apache ssl configuration file
+      execute "#{sudo_cmd} mv -f #{fetch(:tmp_ssl_file)} #{fetch(:ssl_conf_file)}"
     end
   end
 end
