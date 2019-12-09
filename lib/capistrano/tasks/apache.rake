@@ -1,4 +1,53 @@
+# apache tasks
+
 namespace :apache do
+  desc 'Configure Apache (httpd) and restart it'
+  task :configure_and_start do
+    invoke 'apache:configure'
+    invoke 'apache:chkconfig_on' # This task should go to Puppet or installation script
+    invoke 'apache:replace_apache_defaults' # This task should go to Puppet or installation script
+    invoke 'apache:create_symbolic_link'
+  end
+
+  # This task should be moved into Puppet or the installation script
+  desc 'Configure Apache to start at bootup'
+  task :chkconfig_on do
+    on roles(:web) do
+      info 'In task apache:chkconfig_on'
+
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+      debug '#' * 50
+
+      debug 'chkconfig httpd on'
+      execute "#{sudo_cmd} chkconfig httpd on"
+
+      info 'Configured Apache to start at bootup'
+      debug '#' * 50
+    end
+  end
+
+  desc 'Restart Apache (httpd) service'
+  task :restart do
+    on roles(:web) do
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+      debug '#' * 50
+
+      debug 'service httpd stop'
+      execute "#{sudo_cmd} service httpd stop"
+
+      debug 'pkill -9 httpd || true'
+      execute "#{sudo_cmd} pkill -9 httpd || true"
+
+      debug 'service httpd start'
+      execute "#{sudo_cmd} service httpd start"
+
+      info 'Restarted Apache (httpd) service'
+      debug '#' * 50
+    end
+  end
+
   desc 'Configure Apache configuration files'
   task :configure do
 
@@ -9,6 +58,7 @@ namespace :apache do
 
   end
 
+  # This task should be moved into Puppet or the installation script
   desc 'Create Apache multi-site configuration folder'
   task :create_apache_sites_folder do
     on roles(:app) do
@@ -24,7 +74,8 @@ namespace :apache do
     end
   end
 
-  desc 'Configure (HTTP) Apache modules'
+  # This task should be moved into Puppet or the installation script
+  desc 'Configure Apache modules'
   task :configure_apache_modules do
     on roles(:app) do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
@@ -33,7 +84,7 @@ namespace :apache do
       debug 'Configure (HTTP) Apache Passenger module'
 
       set :shared_passenger_file, "/etc/httpd/conf.modules.d/00-passenger.conf"
-      passenger_file = File.expand_path('../recipes/co7/00-passenger.conf', __dir__)
+      passenger_file = File.expand_path('../recipes/apache/00-passenger.conf', __dir__)
 
       # Create a temporary copy of the passenger module file
       set :tmp_passenger_file, '/tmp/00-passenger.conf'
@@ -66,33 +117,6 @@ namespace :apache do
     end
   end
 
-  # desc 'Configure (HTTP) Apache Application configuration files'
-  # task :configure_app_conf_file do
-  #   on roles(:app), in: :sequence do
-  #     sudo_cmd = "echo #{fetch(:password)} | sudo -S"
-  #
-  #     debug '#' * 50
-  #     debug 'Configure (HTTP) Apache Application configuration files'
-  #
-  #     set :shared_apache_conf_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}.conf"
-  #     http_file = File.expand_path('../recipes/co7/apache_http.conf', __dir__)
-  #     upload! StringIO.new(File.read(http_file)), fetch(:shared_apache_conf_file).to_s
-  #
-  #     debug "chmod g+w #{fetch(:shared_apache_conf_file)}"
-  #     execute "chmod g+w #{fetch(:shared_apache_conf_file)}"
-  #
-  #     app_domain = fetch(:app_domain)
-  #     server_name = app_domain.split('/')[2]
-  #
-  #     execute "sed -i 's|<<APP_DOMAIN>>|#{app_domain}|g' #{fetch(:shared_apache_conf_file)}"
-  #     execute "sed -i 's|<<SERVER_NAME>>|#{server_name}|g' #{fetch(:shared_apache_conf_file)}"
-  #
-  #     execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_file)} /etc/httpd/conf.d/"
-  #
-  #     debug '#' * 50
-  #   end
-  # end
-
   desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
     on roles(:app), in: :sequence do
@@ -102,7 +126,7 @@ namespace :apache do
       debug 'Configure (HTTPS) Apache Application configuration files'
 
       set :shared_apache_conf_ssl_file, "#{fetch(:shared_apache_path)}/app_#{fetch(:app_name_uri)}_ssl.conf"
-      http_ssl_file = File.expand_path('../recipes/co7/app_ssl.conf', __dir__)
+      http_ssl_file = File.expand_path('../recipes/apache/app_ssl.conf', __dir__)
       upload! StringIO.new(File.read(http_ssl_file)), fetch(:shared_apache_conf_ssl_file).to_s
 
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
@@ -121,8 +145,9 @@ namespace :apache do
     end
   end
 
-  desc 'Update httpd.conf and ssl.conf'
-  task :secure_apache do
+  # This task should be moved into Puppet or the installation script
+  desc 'Replace CentOS 7 default httpd.conf and ssl.conf file with our version'
+  task :replace_apache_defaults do
     on roles(:web) do
       sudo_cmd = "echo #{fetch(:password)} | sudo -S"
 
@@ -141,7 +166,7 @@ namespace :apache do
 
       # Create a temporary copy of the Apache configuration file
       set :tmp_httpd_file, '/tmp/httpd.conf'
-      httpd_safe_file = File.expand_path('../recipes/co7/httpd.conf', __dir__)
+      httpd_safe_file = File.expand_path('../recipes/apache/httpd.conf', __dir__)
 
       upload! StringIO.new(File.read(httpd_safe_file)), fetch(:tmp_httpd_file).to_s
 
@@ -160,12 +185,84 @@ namespace :apache do
 
       # Create a temporary copy of the Apache ssl configuration file
       set :tmp_ssl_file, '/tmp/ssl.conf'
-      ssl_safe_file = File.expand_path('../recipes/co7/ssl.conf', __dir__)
+      ssl_safe_file = File.expand_path('../recipes/apache/ssl.conf', __dir__)
 
       upload! StringIO.new(File.read(ssl_safe_file)), fetch(:tmp_ssl_file).to_s
 
       # Replace the original Apache ssl configuration file
       execute "#{sudo_cmd} mv -f #{fetch(:tmp_ssl_file)} #{fetch(:ssl_conf_file)}"
+    end
+  end
+
+  desc 'Check that the user has write permissions in the Deploy and in Apache DocumentRoot folders'
+  task :check_write_permissions do
+    invoke 'apache:check_write_permissions_on_deploy'
+    invoke 'apache:check_write_permissions_on_document_root'
+  end
+
+  desc 'Check that we have the right permission to the folder the app should be deployed to'
+  task :check_write_permissions_on_deploy do
+    on roles(:app), in: :sequence do |host|
+      debug '#' * 50
+      debug "Checking folder '#{fetch(:deploy_to)}' (where the application has to be deployed) "\
+            "for the right permissions on Host '#{host}'"
+
+      if test("[ -w #{fetch(:deploy_to)} ]")
+        info "#{fetch(:deploy_to)} is writable on #{host}"
+      else
+        error "#{fetch(:deploy_to)} is not writable on #{host}"
+      end
+
+      debug '#' * 50
+    end
+  end
+
+  desc 'Check that we have the right permission to the Apache DocumentRoot folder'
+  task :check_write_permissions_on_document_root do
+    on roles(:web) do |host|
+      debug '#' * 50
+      debug "Checking Apache DocumentRoot folder (#{fetch(:apache_document_root)}) permissions on Host '#{host}'"
+
+      if test("[ -w #{fetch(:apache_document_root)} ]")
+        info "#{fetch(:apache_document_root)} is writable on #{host}"
+      else
+        info "#{fetch(:apache_document_root)} is not writable on #{host}"
+      end
+
+      debug '#' * 50
+    end
+  end
+
+  desc 'Create Apache configuration files shared folder'
+  task :create_apache_shared_folder do
+    on roles(:app) do
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+      debug '#' * 50
+      debug 'Create Apache configuration files shared folder'
+
+      debug "mkdir -p #{fetch(:shared_apache_path)}"
+      execute "#{sudo_cmd} mkdir -p #{fetch(:shared_apache_path)}"
+
+      debug "chmod g+ws #{fetch(:shared_apache_path)}"
+      execute "#{sudo_cmd} chmod g+ws #{fetch(:shared_apache_path)}"
+
+      debug '#' * 50
+    end
+  end
+
+  desc 'Create symbolic link to application public folder in Apache DocumentRoot folder'
+  task :create_symbolic_link do
+    on roles(:web), in: :sequence do
+      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+
+      info '#' * 50
+      info 'Creating application symbolic link'
+
+      debug "ln -sfn #{fetch(:deploy_to)}/current/public #{fetch(:apache_deploy_symbolic_link)}"
+      execute "#{sudo_cmd} ln -sfn #{fetch(:deploy_to)}/current/public #{fetch(:apache_deploy_symbolic_link)}"
+
+      info '#' * 50
     end
   end
 end

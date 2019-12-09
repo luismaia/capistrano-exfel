@@ -1,8 +1,8 @@
 digraph {
-
     rankdir=LR;
+    ordering=out ;
 	edge [arrowhead=open;fontname=Arial;labeldistance=0];
-	node [shape=record;fontname=Arial];
+	node [shape=box;fontname=Arial];
 	// splines=ortho;
 
     subgraph cluster_application {
@@ -18,31 +18,19 @@ digraph {
         "load:defaults";
     }
 
-    subgraph cluster_apache_rpm {
-        label="apache_rpm.rake";
+    subgraph cluster_apache {
+        label="apache.rake";
         labeljust="l";
         fontname="Arial";
         "apache:configure_and_start" -> "apache:chkconfig_on"[label="2",color=blue];
         "application:deploy_first_time" -> "apache:configure_and_start"[label="5",color=yellow];
         "application:restart" -> "apache:restart"[label="1",color=black];
-    }
-
-    subgraph cluster_apache_co7 {
-        label="apache_co7.rake";
-        labeljust="l";
-        fontname="Arial";
         "application:reconfigure_apache" -> "apache:configure"[label="1",color=black];
         "apache:configure_and_start" -> "apache:configure"[label="1",color=black];
         "apache:configure" -> "apache:create_apache_sites_folder"[label="2",color=blue];
         "apache:configure" -> "apache:configure_apache_modules"[label="3",color=purple];
         "apache:configure" -> "apache:configure_app_ssl_conf_file"[label="4",color=red];
         "apache:configure_and_start" -> "apache:secure_apache"[label="3",color=purple];
-    }
-
-    subgraph cluster_apache_common {
-        label="apache_common.rake";
-        labeljust="l";
-        fontname="Arial";
         "apache:configure" -> "apache:create_apache_shared_folder"[label="1",color=black];
         "apache:configure_and_start" -> "apache:create_symbolic_link"[label="4",color=red];
         "application:deploy_first_time" -> "apache:check_write_permissions"[label="6",color=green];
