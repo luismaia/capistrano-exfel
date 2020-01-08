@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :database do
   desc 'Seed default data (roles and common users) to the database'
   task :seed do

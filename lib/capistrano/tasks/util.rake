@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def remote_file_exists?(full_path)
   get_command_output("if [ -e #{full_path} ]; then echo 'true'; fi") == 'true'
 end

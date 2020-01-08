@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # apache tasks
 
 namespace :apache do
@@ -50,12 +52,10 @@ namespace :apache do
 
   desc 'Configure Apache configuration files'
   task :configure do
-
     invoke 'apache:create_apache_shared_folder'
     invoke 'apache:create_apache_sites_folder'
     invoke 'apache:configure_apache_modules'
     invoke 'apache:configure_app_ssl_conf_file'
-
   end
 
   # This task should be moved into Puppet or the installation script
@@ -67,7 +67,7 @@ namespace :apache do
       debug '#' * 50
       debug 'Create Apache multi-site configuration folder'
 
-      debug "mkdir -p /etc/httpd/sites.d"
+      debug 'mkdir -p /etc/httpd/sites.d'
       execute "#{sudo_cmd} mkdir -p /etc/httpd/sites.d"
 
       debug '#' * 50
@@ -83,7 +83,7 @@ namespace :apache do
       debug '#' * 50
       debug 'Configure (HTTP) Apache Passenger module'
 
-      set :shared_passenger_file, "/etc/httpd/conf.modules.d/00-passenger.conf"
+      set :shared_passenger_file, '/etc/httpd/conf.modules.d/00-passenger.conf'
       passenger_file = File.expand_path('../recipes/apache/00-passenger.conf', __dir__)
 
       # Create a temporary copy of the passenger module file
