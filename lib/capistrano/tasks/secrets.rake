@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :secrets do
   desc 'Create secrets.yml in shared path'
   task :configure do

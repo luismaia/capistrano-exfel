@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :app_home do
   desc 'Create on server the necessary placeholders for storing the Application'
   task :create_all do

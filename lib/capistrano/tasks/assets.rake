@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # avoid asset precompilation in dev environment
 
 Rake::Task['deploy:compile_assets'].clear_actions
