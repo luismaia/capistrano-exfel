@@ -10,9 +10,7 @@ require 'capistrano/rvm'
 # Includes tasks for rails
 require 'capistrano/rails'
 
-load File.expand_path('../tasks/apache_common.rake', __dir__)
-load File.expand_path('../tasks/apache_rpm.rake', __dir__)
-load File.expand_path('../tasks/apache_co7.rake', __dir__)
+load File.expand_path('../tasks/apache.rake', __dir__)
 load File.expand_path('../tasks/app_home.rake', __dir__)
 load File.expand_path('../tasks/assets.rake', __dir__)
 load File.expand_path('../tasks/application.rake', __dir__)
