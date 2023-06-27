@@ -75,7 +75,7 @@ namespace :secrets do
   # desc 'Correct secrets.yml file permissions before change the file'
   task :set_permissions_pre_update do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -90,7 +90,7 @@ namespace :secrets do
   # desc 'Correct secrets.yml file permissions after change the file'
   task :set_permissions_post_update do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
