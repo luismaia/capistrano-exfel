@@ -65,7 +65,7 @@ namespace :util do
   task :klist do
     on roles(:app, :web) do
       info '#' * 100
-      info '#' * 10 + ' ===> KLIST <=== '
+      info "#{'#' * 10} ===> KLIST <=== "
       info '#' * 10 + execute_rake_command('klist').to_s
       info '#' * 100
     end

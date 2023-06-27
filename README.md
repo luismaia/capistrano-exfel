@@ -9,9 +9,9 @@ Installation of Phusion Passenger and RVM are also required to this gem.
 Add these lines to your application's Gemfile:
 
     # Use Capistrano for deployment
-    gem 'capistrano', '3.11.2', require: false
-    gem 'capistrano-exfel', '0.3.0', require: false
-    gem 'capistrano-rails', '1.4.0', require: false
+    gem 'capistrano', '3.17.3', require: false
+    gem 'capistrano-exfel', '0.4.0', require: false
+    gem 'capistrano-rails', '1.6.2', require: false
     gem 'capistrano-rvm', '0.1.2', require: false
 
 
@@ -117,7 +117,7 @@ set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo
 
 # RVM related information
 # set :rvm_type, :system
-set :rvm_ruby_version, '2.4.4' # If not specified will ask for it
+set :rvm_ruby_version, '3.1.3' # If not specified will ask for it
 # set :rvm_roles, [:app, :web]
 ```
 

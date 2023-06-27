@@ -17,7 +17,7 @@ namespace :apache do
     on roles(:web) do
       info 'In task apache:chkconfig_on'
 
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -32,7 +32,7 @@ namespace :apache do
   desc 'Restart Apache (httpd) service'
   task :restart do
     on roles(:web) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -62,7 +62,7 @@ namespace :apache do
   desc 'Create Apache multi-site configuration folder'
   task :create_apache_sites_folder do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Create Apache multi-site configuration folder'
@@ -78,7 +78,7 @@ namespace :apache do
   desc 'Configure Apache modules'
   task :configure_apache_modules do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Configure (HTTP) Apache Passenger module'
@@ -91,7 +91,8 @@ namespace :apache do
 
       upload! StringIO.new(File.read(passenger_file)), fetch(:tmp_passenger_file).to_s
 
-      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
+      rvm_passenger_root_cmd = "/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root"
+      passenger_root = get_command_output(rvm_passenger_root_cmd)
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
 
       debug "sed -i 's|<<PASSENGER_ROOT>>|#{passenger_root}|g' #{fetch(:tmp_passenger_file)}"
@@ -120,7 +121,7 @@ namespace :apache do
   desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
     on roles(:app), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Configure (HTTPS) Apache Application configuration files'
@@ -132,7 +133,8 @@ namespace :apache do
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
 
-      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
+      rvm_passenger_root_cmd = "/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root"
+      passenger_root = get_command_output(rvm_passenger_root_cmd)
       ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
 
       execute "sed -i 's/<<APPLICATION_NAME>>/#{fetch(:app_name_uri)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
@@ -149,7 +151,7 @@ namespace :apache do
   desc 'Replace CentOS 7 default httpd.conf and ssl.conf file with our version'
   task :replace_apache_defaults do
     on roles(:web) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Update httpd.conf and ssl.conf'
@@ -236,7 +238,7 @@ namespace :apache do
   desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Create Apache configuration files shared folder'
@@ -254,7 +256,7 @@ namespace :apache do
   desc 'Create symbolic link to application public folder in Apache DocumentRoot folder'
   task :create_symbolic_link do
     on roles(:web), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       info '#' * 50
       info 'Creating application symbolic link'
