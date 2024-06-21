@@ -6,7 +6,6 @@ namespace :apache do
   desc 'Configure Apache (httpd) and restart it'
   task :configure_and_start do
     invoke 'apache:configure'
-    invoke 'apache:replace_apache_defaults' # This task should go to Puppet or installation script
     invoke 'apache:create_symbolic_link'
   end
 
@@ -59,7 +58,8 @@ namespace :apache do
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_apache_conf_ssl_file)}"
 
-      execute "#{sudo_cmd} a2ensite #{fetch(:shared_apache_conf_ssl_file)}"
+      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/apache2/sites-available/"
+      execute "#{sudo_cmd} a2ensite `basename #{fetch(:shared_apache_conf_ssl_file)} .conf`"
 
       debug '#' * 50
     end
