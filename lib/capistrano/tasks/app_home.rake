@@ -170,14 +170,4 @@ namespace :app_home do
     end
   end
 
-  ###
-  # This task doesn't look to be working:
-  # desc 'Restart application'
-  ###
-  task :restart do
-    on roles(:app) do
-      info '#' * 10 + ' Touching restart.txt...'
-      execute :touch, release_path.join('tmp/restart.txt')
-    end
-  end
 end
