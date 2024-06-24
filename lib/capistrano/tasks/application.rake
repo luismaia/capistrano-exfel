@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# EXFEL application specific tasks
+# EuXFEL application specific tasks
 namespace :application do
   # Task 'application:deploy_first_time' deploys an application for the first time in the configured server(s).
   # This task besides deploying the application also make all the necessary configurations
