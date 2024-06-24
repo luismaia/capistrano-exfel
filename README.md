@@ -1,17 +1,17 @@
 # Capistrano::Exfel
 
 Deploys Ruby on Rails Applications in EXFEL VMs using Capistrano3 throw username/password authentication.
-The standard EXFEL VMs consist of CentOS 7, Alma Linux 8/9 or Ubuntu 20/22 with Apache.
-Installation of Phusion Passenger and RVM are also required for this gem.
+The standard EXFEL VMs for web applications is Ubuntu 22 with Apache web server.
+Installation of Phusion Passenger and RVM are also required to this gem.
 
 ## Installation
 
 Add these lines to your application's Gemfile:
 
     # Use Capistrano for deployment
-    gem 'capistrano', '3.17.3', require: false
-    gem 'capistrano-exfel', '0.4.0', require: false
-    gem 'capistrano-rails', '1.6.2', require: false
+    gem 'capistrano', '3.18.1', require: false
+    gem 'capistrano-exfel', '0.5.0', require: false
+    gem 'capistrano-rails', '1.6.3', require: false
     gem 'capistrano-rvm', '0.1.2', require: false
 
 
@@ -28,20 +28,10 @@ $ gem install capistrano-exfel
 
 ## Usage
 
-Add this line to your `Capfile` for Scientific Linux 6 machines:
-
-    # Load Capistrano Exfel Scientific Linux 6 tasks
-    require 'capistrano/exfel/sl6'
-
-Add this line to your `Capfile` for CentOS 7 machines:
-
-    # Load Capistrano Exfel CentOS tasks
-    require 'capistrano/exfel/co7'
-
-Add this line to your `Capfile` for Ubuntu 14 machines:
+Add this line to your `Capfile` for Ubuntu 22 machines:
 
     # Load Ubuntu 14 tasks
-    require 'capistrano/exfel/ub14'
+    require 'capistrano/exfel/ubuntu22'
 
 
 This gem will reuse `capistrano-rails` and `capistrano-rvm` tasks to build the following tasks:

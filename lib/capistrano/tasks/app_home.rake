@@ -79,12 +79,12 @@ namespace :app_home do
         debug '#' * 50
 
         # Needs access to the folder due to the first write and log rotation
-        debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
-        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
+        debug "chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
+        execute "#{sudo_cmd} chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/log"
 
         # Needs write permissions
-        debug "chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
-        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
+        debug "chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
+        execute "#{sudo_cmd} chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:shared_path)}/tmp/"
 
         # Since the cache is local to any App installation it's necessary to update permissions
         app_cache_folder = release_path.join('tmp/cache')
@@ -93,9 +93,9 @@ namespace :app_home do
         debug "mkdir -p #{app_cache_folder}"
         execute "#{sudo_cmd} mkdir -p #{app_cache_folder}"
 
-        # Phusion Passenger (as nobody) needs write permissions to cache folder
-        debug "chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
-        execute "#{sudo_cmd} chown -R nobody.#{fetch(:app_group_owner)} #{app_cache_folder}"
+        # Phusion Passenger (respective user) needs write permissions to cache folder
+        debug "chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{app_cache_folder}"
+        execute "#{sudo_cmd} chown -R #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{app_cache_folder}"
 
         # Give write permissions to groups
         debug "chmod g+ws #{app_cache_folder}"
@@ -116,7 +116,7 @@ namespace :app_home do
         set :public_folder_path, "#{release_path}/public"
 
         debug '#' * 50
-        chown_command = "chown -Rf nobody.#{fetch(:app_group_owner)} #{fetch(:public_folder_path)}/*"
+        chown_command = "chown -Rf #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:public_folder_path)}/*"
         debug chown_command
         execute "#{sudo_cmd} #{chown_command}"
 
@@ -170,14 +170,4 @@ namespace :app_home do
     end
   end
 
-  ###
-  # This task doesn't look to be working:
-  # desc 'Restart application'
-  ###
-  task :restart do
-    on roles(:app) do
-      info "#{'#' * 10} Touching restart.txt..."
-      execute :touch, release_path.join('tmp/restart.txt')
-    end
-  end
 end
