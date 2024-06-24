@@ -147,6 +147,7 @@ namespace :load do
 
     # Sudo related information
     set :use_sudo, -> { true }
+    set :app_user_owner, -> { 'www-data' }
     set :app_group_owner, -> { 'exfl_itdm' }
 
     # Capistrano::Rails

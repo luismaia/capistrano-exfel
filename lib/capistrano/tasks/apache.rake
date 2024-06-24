@@ -51,8 +51,7 @@ namespace :apache do
       debug "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
       execute "chmod g+w #{fetch(:shared_apache_conf_ssl_file)}"
 
-      passenger_root = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do passenger-config --root")
-      ruby_path = "/#{passenger_root.split('/')[1..5].join('/')}/wrappers/ruby"
+      ruby_path = get_command_output("/usr/local/rvm/bin/rvm #{fetch(:rvm_ruby_version)} do which ruby")
 
       execute "sed -i 's/<<APPLICATION_NAME>>/#{fetch(:app_name_uri)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
@@ -75,8 +74,8 @@ namespace :apache do
   task :check_write_permissions_on_deploy do
     on roles(:app), in: :sequence do |host|
       debug '#' * 50
-      debug "Checking folder '#{fetch(:deploy_to)}' (where the application has to be deployed) "\
-            "for the right permissions on Host '#{host}'"
+      debug "Checking folder '#{fetch(:deploy_to)}' (where the application has to be deployed) " \
+              "for the right permissions on Host '#{host}'"
 
       if test("[ -w #{fetch(:deploy_to)} ]")
         info "#{fetch(:deploy_to)} is writable on #{host}"

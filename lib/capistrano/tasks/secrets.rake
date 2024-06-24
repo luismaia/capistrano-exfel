@@ -95,7 +95,7 @@ namespace :secrets do
       debug '#' * 50
 
       # Update database.yml user and group owners
-      chown_command = "chown nobody.#{fetch(:app_group_owner)} #{fetch(:secrets_file_path)}"
+      chown_command = "chown #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:secrets_file_path)}"
       debug chown_command
       execute "#{sudo_cmd} #{chown_command}"
 
