@@ -107,7 +107,7 @@ set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo
 
 # RVM related information
 # set :rvm_type, :system
-set :rvm_ruby_version, '2.4.4' # If not specified will ask for it
+set :rvm_ruby_version, '3.1.3' # If not specified will ask for it
 # set :rvm_roles, [:app, :web]
 ```
 

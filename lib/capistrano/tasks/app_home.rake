@@ -11,7 +11,7 @@ namespace :app_home do
   desc 'Create application deploy folders on server and give it the correct permissions'
   task :create_deploy_folder do
     on roles(:app), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -31,7 +31,7 @@ namespace :app_home do
   desc 'Create shared folder on server DEPLOY folder and give it the correct permissions'
   task :create_shared_folder do
     on roles(:app), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -74,7 +74,7 @@ namespace :app_home do
   task :correct_shared_permissions do
     on roles(:app), in: :sequence do
       within release_path do
-        sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+        sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
         debug '#' * 50
 
@@ -110,7 +110,7 @@ namespace :app_home do
   task :correct_public_folder_permissions do
     on roles(:app) do
       within release_path do
-        sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+        sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
         debug '#' * 50
         set :public_folder_path, "#{release_path}/public"
@@ -147,7 +147,7 @@ namespace :app_home do
   task :deploy_first_time_start_msg do
     on roles(:msg) do
       info '#' * 100
-      info '#' * 10 + ' => Start Application first time deployment...'
+      info "#{'#' * 10} => Start Application first time deployment..."
       info '#' * 100
     end
   end
@@ -155,7 +155,7 @@ namespace :app_home do
   task :deploy_start_msg do
     on roles(:msg) do
       info '#' * 100
-      info '#' * 10 + ' => Start Application re-deployment...'
+      info "#{'#' * 10} => Start Application re-deployment..."
       info '#' * 100
     end
   end
@@ -163,7 +163,7 @@ namespace :app_home do
   task :deploy_success_msg do
     on roles(:msg) do
       info '#' * 100
-      info '#' * 10 + ' => Application Successfully deployed...'
+      info "#{'#' * 10} => Application Successfully deployed..."
       info '#' * 100
       info '#' * 10 + " => visit: #{fetch(:app_domain)}#{fetch(:app_name_uri)}"
       info '#' * 100

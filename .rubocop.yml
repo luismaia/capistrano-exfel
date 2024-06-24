@@ -22,8 +22,12 @@ Style/Lambda:
 #
 # Block has too many lines.
 Metrics/BlockLength:
-  Max: 160 # Default 25
+  Max: 200 # Default 25
 
 # Use meaningful heredoc delimiters.
 Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+# This gem doesn't need to be dependent on a specific Ruby version
+RequiredRubyVersion:
   Enabled: false

@@ -12,7 +12,7 @@ namespace :apache do
   desc 'Restart Apache (httpd) service'
   task :restart do
     on roles(:web) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
 
@@ -39,7 +39,7 @@ namespace :apache do
   desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
     on roles(:app), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Configure (HTTPS) Apache Application configuration files'
@@ -106,7 +106,7 @@ namespace :apache do
   desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
     on roles(:app) do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       debug '#' * 50
       debug 'Create Apache configuration files shared folder'
@@ -124,7 +124,7 @@ namespace :apache do
   desc 'Create symbolic link to application public folder in Apache DocumentRoot folder'
   task :create_symbolic_link do
     on roles(:web), in: :sequence do
-      sudo_cmd = "echo #{fetch(:password)} | sudo -S"
+      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
 
       info '#' * 50
       info 'Creating application symbolic link'
