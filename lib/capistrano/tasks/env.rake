@@ -43,7 +43,7 @@ namespace :env do
       debug '#' * 50
 
       pattern = 'SECRET_KEY_BASE=.*'
-      new_secret = "SECRET_KEY_BASE=#{fetch(:secret_key_base)}"
+      new_secret = "SECRET_KEY_BASE=#{fetch(:secrets_key_base)}"
       env_file_path = fetch(:env_file_path).to_s
 
       if remote_file_exists?(env_file_path)
