@@ -10,7 +10,7 @@ namespace :application do
     invoke 'app_home:deploy_first_time_start_msg'
     invoke 'app_home:create_all'
     invoke 'database:configure_mysql'
-    invoke 'env:configure'
+    invoke 'config:configure'
     invoke 'apache:configure_and_start'
     invoke 'apache:check_write_permissions'
     invoke :deploy
@@ -25,7 +25,7 @@ namespace :application do
     # This is advisable to kill users cookies after the upgrade.
     # The consequence is that users will be logged out automatically from the Application after the upgrade.
     # This is important to avoid errors with old validity_token in forms
-    invoke 'env:update_app_secret'
+    invoke 'config:update_app_secret'
     invoke :deploy
     invoke 'app_home:correct_shared_permissions'
     invoke 'application:restart'
