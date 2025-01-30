@@ -1,0 +1,16 @@
+# local configuration to override config.yml
+
+development:
+
+# put here any override or subkey addition for development environment
+# e.g. for local development
+
+test:
+
+# put here any override or subkey addition for test environment
+# e.g. for running rspec locally
+
+production:
+
+# put here any override or subkey addition for production environment
+# e.g. for running production locally or in stage deployment
