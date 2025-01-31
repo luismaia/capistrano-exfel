@@ -92,22 +92,36 @@ set :repo_url, 'exfl_git_server:/my_app_repo_path' # 'git@example.com:me/my_repo
 # Default value for :format is :pretty
 # set :format, :pretty
 
-# Default value for :log_level is :debug
-# set :log_level, :info
+# Default value for :log_level is :info
+# set :log_level, :debug
 
 # Default value for :linked_files is []
-# set :linked_files, %w(config/database.yml config/secrets.yml)
+# set :linked_files, %w(config/database.yml)
 
-# Default value for linked_dirs is []
-# set :linked_dirs, %w(bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
+# Define value for linked_dirs
+append :linked_dirs, 'log', 'files',
+       'tmp/pids', 'tmp/cache', 'tmp/sockets',
+       'vendor/bundle', '.bundle',
+       'public/system', 'public/uploads'
+# append :linked_files, 'config/database.yml', 'config/secrets.yml'
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
 # RVM related information
-# set :rvm_type, :system
-set :rvm_ruby_version, '3.1.3' # If not specified will ask for it
+set :rvm_type, :system
+set :rvm_ruby_version, '3.3.0' # If not specified will ask for it
 # set :rvm_roles, [:app, :web]
+# set :rvm_custom_path, '~/.myveryownrvm'  # only needed if not detected
+
+# Default value for default_env is {}
+# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+# set :default_env, { rvm_bin_path: '/usr/local/rvm/bin'}
+
+# Defaults to nil (no asset cleanup is performed)
+# If you use Rails 4+ and you'd like to clean up old assets after each deploy,
+# set this to the number of versions to keep
+set :keep_assets, 5
 ```
 
 As an example, to configure GIT plugin, add the following to the Capfile:
