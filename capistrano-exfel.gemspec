@@ -11,8 +11,7 @@ Gem::Specification.new do |spec|
   spec.email                 = %w[luisgoncalo.maia@gmail.com maurizio.manetti@xfel.eu]
   spec.summary               = 'Deploy Ruby on Rails 4, 5, 6, 7 and 8 Applications in EuXFEL Virtual Machines'
   spec.description           = 'Deployment of Ruby on Rails Applications in EuXFEL Virtual Machines ' \
-                                '(Ubuntu 22.04 + Apache + RVM + Phusion Passenger) ' \
-                                'using Capistrano3 and LDAP'
+                                '(Ubuntu 22.04 + Apache + RVM + Phusion Passenger) '
   spec.homepage              = 'https://github.com/luismaia/capistrano-exfel'
   spec.license               = 'MIT'
 
@@ -20,6 +19,8 @@ Gem::Specification.new do |spec|
   spec.executables           = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files            = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths         = ['lib']
+  spec.platform              = 'ruby'
+  spec.required_ruby_version = '>= 3.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 13.0'
