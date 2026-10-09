@@ -12,18 +12,16 @@ namespace :apache do
   desc 'Restart Apache (httpd) service'
   task :restart do
     on roles(:web) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
 
       debug 'systemctl stop apache2'
-      execute "#{sudo_cmd} systemctl stop apache2"
+      execute_with_sudo('systemctl stop apache2')
 
       debug 'pkill -9 apache2 || true'
-      execute "#{sudo_cmd} pkill -9 apache2 || true"
+      execute_with_sudo('pkill -9 apache2 || true')
 
       debug 'systemctl start apache2'
-      execute "#{sudo_cmd} systemctl start apache2"
+      execute_with_sudo('systemctl start apache2')
 
       info 'Restarted Apache (apache2) service'
       debug '#' * 50
@@ -39,8 +37,6 @@ namespace :apache do
   desc 'Configure (HTTPS) Apache Application configuration files'
   task :configure_app_ssl_conf_file do
     on roles(:app), in: :sequence do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
       debug 'Configure (HTTPS) Apache Application configuration files'
 
@@ -57,8 +53,8 @@ namespace :apache do
       execute "sed -i 's/<<ENVIRONMENT>>/#{fetch(:environment)}/g' #{fetch(:shared_apache_conf_ssl_file)}"
       execute "sed -i 's|<<RUBY_PATH>>|#{ruby_path}|g' #{fetch(:shared_apache_conf_ssl_file)}"
 
-      execute "#{sudo_cmd} ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/apache2/sites-available/"
-      execute "#{sudo_cmd} a2ensite `basename #{fetch(:shared_apache_conf_ssl_file)} .conf`"
+      execute_with_sudo("ln -sfn #{fetch(:shared_apache_conf_ssl_file)} /etc/apache2/sites-available/")
+      execute_with_sudo("a2ensite `basename #{fetch(:shared_apache_conf_ssl_file)} .conf`")
 
       debug '#' * 50
     end
@@ -106,16 +102,14 @@ namespace :apache do
   desc 'Create Apache configuration files shared folder'
   task :create_apache_shared_folder do
     on roles(:app) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
       debug 'Create Apache configuration files shared folder'
 
       debug "mkdir -p #{fetch(:shared_apache_path)}"
-      execute "#{sudo_cmd} mkdir -p #{fetch(:shared_apache_path)}"
+      execute_with_sudo("mkdir -p #{fetch(:shared_apache_path)}")
 
       debug "chmod g+ws #{fetch(:shared_apache_path)}"
-      execute "#{sudo_cmd} chmod g+ws #{fetch(:shared_apache_path)}"
+      execute_with_sudo("chmod g+ws #{fetch(:shared_apache_path)}")
 
       debug '#' * 50
     end
@@ -124,13 +118,11 @@ namespace :apache do
   desc 'Create symbolic link to application public folder in Apache DocumentRoot folder'
   task :create_symbolic_link do
     on roles(:web), in: :sequence do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       info '#' * 50
       info 'Creating application symbolic link'
 
       debug "ln -sfn #{fetch(:deploy_to)}/current/public #{fetch(:apache_deploy_symbolic_link)}"
-      execute "#{sudo_cmd} ln -sfn #{fetch(:deploy_to)}/current/public #{fetch(:apache_deploy_symbolic_link)}"
+      execute_with_sudo("ln -sfn #{fetch(:deploy_to)}/current/public #{fetch(:apache_deploy_symbolic_link)}")
 
       info '#' * 50
     end
