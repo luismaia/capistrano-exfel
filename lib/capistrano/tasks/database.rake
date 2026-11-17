@@ -42,12 +42,12 @@ namespace :database do
       debug 'Create and configure database.yml file'
 
       set :db_orig_file_path, File.expand_path("../../recipes/config/#{fetch(:database_original_file_name)}", __FILE__)
-      upload! StringIO.new(File.read(fetch(:db_orig_file_path).to_s)), fetch(:database_file_path).to_s
-
-      execute "sed -i 's/<<database_name>>/#{fetch(:database_name)}/g' #{fetch(:database_file_path)}"
-      execute "sed -i 's/<<database_username>>/#{fetch(:database_username)}/g' #{fetch(:database_file_path)}"
-      execute "sed -i 's/<<database_password>>/#{fetch(:database_password)}/g' #{fetch(:database_file_path)}"
-      execute "sed -i 's/<<database_host>>/#{fetch(:database_host)}/g' #{fetch(:database_file_path)}"
+      database_config = File.read(fetch(:db_orig_file_path).to_s)
+                            .gsub('<<database_name>>') { fetch(:database_name).to_s }
+                            .gsub('<<database_username>>') { fetch(:database_username).to_s }
+                            .gsub('<<database_password>>') { fetch(:database_password).to_s }
+                            .gsub('<<database_host>>') { fetch(:database_host).to_s }
+      upload! StringIO.new(database_config), fetch(:database_file_path).to_s
 
       debug '#' * 50
     end
@@ -56,13 +56,11 @@ namespace :database do
   # desc 'Correct database.yml file permissions before change the file'
   task :set_permissions_pre_update do
     on roles(:app) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
 
       chmod_command = "chmod -f 777 #{fetch(:database_file_path)} || true"
       debug chmod_command
-      execute "#{sudo_cmd} #{chmod_command}"
+      execute_with_sudo(chmod_command)
 
       debug '#' * 50
     end
@@ -71,18 +69,16 @@ namespace :database do
   # desc 'Correct database.yml file permissions after change the file'
   task :set_permissions_post_update do
     on roles(:app) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
 
       # Update database.yml user and group owners
       chown_command = "chown #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:database_file_path)}"
       debug chown_command
-      execute "#{sudo_cmd} #{chown_command}"
+      execute_with_sudo(chown_command)
 
       chmod_command = "chmod 440 #{fetch(:database_file_path)}"
       debug chmod_command
-      execute "#{sudo_cmd} #{chmod_command}"
+      execute_with_sudo(chmod_command)
 
       debug '#' * 50
     end

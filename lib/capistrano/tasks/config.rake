@@ -77,13 +77,11 @@ namespace :config do
   # desc 'Correct .env file permissions before change the file'
   task :set_permissions_pre_update do
     on roles(:app) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
 
       chmod_command = "chmod -f 777 #{fetch(:env_file_path)} || true"
       debug chmod_command
-      execute "#{sudo_cmd} #{chmod_command}"
+      execute_with_sudo(chmod_command)
 
       debug '#' * 50
     end
@@ -92,24 +90,22 @@ namespace :config do
   # desc 'Correct .env file permissions after change the file and local.yml file permissions'
   task :set_permissions_post_update do
     on roles(:app) do
-      sudo_cmd = "echo '#{fetch(:password)}' | sudo -S"
-
       debug '#' * 50
 
       # Update .env and local.yml user and group owners
       chown_command_env = "chown #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:env_file_path)}"
       chown_command_local = "chown #{fetch(:app_user_owner)}.#{fetch(:app_group_owner)} #{fetch(:local_file_path)}"
       debug chown_command_env
-      execute "#{sudo_cmd} #{chown_command_env}"
+      execute_with_sudo(chown_command_env)
       debug chown_command_local
-      execute "#{sudo_cmd} #{chown_command_local}"
+      execute_with_sudo(chown_command_local)
 
       chmod_command_env = "chmod 440 #{fetch(:env_file_path)}"
       chmod_command_local = "chmod 440 #{fetch(:local_file_path)}"
       debug chmod_command_env
-      execute "#{sudo_cmd} #{chmod_command_env}"
+      execute_with_sudo(chmod_command_env)
       debug chmod_command_local
-      execute "#{sudo_cmd} #{chmod_command_local}"
+      execute_with_sudo(chmod_command_local)
 
       debug '#' * 50
     end

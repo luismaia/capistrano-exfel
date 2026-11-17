@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+require 'shellwords'
+
+def execute_with_sudo(command)
+  prompt = '[sudo] password:'
+  interaction_handler = {
+    /#{Regexp.escape(prompt)}/ => "#{fetch(:password)}\n"
+  }
+
+  execute :sudo, '-S', '-p', Shellwords.escape(prompt), '--',
+          :sh, '-c', Shellwords.escape(command),
+          interaction_handler: interaction_handler
+end
+
 def remote_file_exists?(full_path)
   get_command_output("if [ -e #{full_path} ]; then echo 'true'; fi") == 'true'
 end
